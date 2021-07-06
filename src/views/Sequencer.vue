@@ -1,9 +1,17 @@
 <template>
     <div class="sequencer">
         <h2>Sequencer</h2>
+        <input v-model="bpm" />
         <input type="button" value="Start Sequence" @click="sequence" />
+        <input type="button" value="Stop Sequence" @click="stopSequence" />
         <section class="pattern">
-            <div v-for="i in 16" class="trigger" :key="i" @click="playTone(i)">
+            <div
+                v-for="i in 16"
+                class="trigger"
+                :class="isActive(i) ? 'active' : ''"
+                :key="i"
+                @click="setTrigger(i)"
+            >
                 {{ i }}
             </div>
         </section>
@@ -15,30 +23,74 @@ import * as Tone from "tone";
 
 export default {
     name: "Sequencer",
-    methods: {
-        playTone(triggerIndex) {
-            //create a synth and connect it to the main output (your speakers)
-            const synth = new Tone.Synth().toDestination();
-
-            //play a middle 'C' for the duration of an 8th note
-            synth.triggerAttackRelease("C4", "8n");
+    data() {
+        return {
+            bpm: 90,
+            sequenceTrigger: [],
+        };
+    },
+    computed: {
+        parsedSequenceTrigger() {
+            const sequence = [];
+            for (var i = 0; i < 16; i++) {
+                if (this.isActive(i)) {
+                    sequence.push({
+                        time: "0:0:" + i,
+                        note: "C4",
+                        duration: "16n",
+                    });
+                }
+            }
+            return sequence;
         },
+    },
+    watch: {
+        bpm: {
+            handler(val) {
+                Tone.Transport.bpm.value = val;
+            },
+            immediate: true,
+        },
+    },
+    methods: {
         sequence() {
-            // create two monophonic synths
-            const synthA = new Tone.FMSynth().toDestination();
-            const synthB = new Tone.AMSynth().toDestination();
-            //play a note every quarter-note
-            const loopA = new Tone.Loop((time) => {
-                synthA.triggerAttackRelease("C2", "8n", time);
-            }, "4n").start(0);
-            //play another note every off quarter-note, by starting it "8n"
-            const loopB = new Tone.Loop((time) => {
-                synthB.triggerAttackRelease("C4", "8n", time);
-            }, "4n").start("8n");
-            // the loops start when the Transport is started
+            const synth = new Tone.Synth().toDestination();
+            const seq = new Tone.Part(
+                (time, value) => {
+                    console.log(time, value);
+                    synth.triggerAttackRelease(
+                        value.note,
+                        value.duration,
+                        time,
+                        value.velocity
+                    );
+                },
+                this.parsedSequenceTrigger
+                /*[
+                    { time: "0:0:0", note: "C4", duration: "8n" },
+                    { time: "0:0:2", note: "A4", duration: "8n" },
+                ]*/
+            ).start(0);
+            seq.loop = true;
             Tone.Transport.start();
-            // ramp up to 800 bpm over 10 seconds
-            // Tone.Transport.bpm.rampTo(800, 10);
+        },
+        stopSequence() {
+            Tone.Transport.stop();
+        },
+        setTrigger(i) {
+            const currentTrigger = this.sequenceTrigger.find(
+                (item) => item.index == i
+            );
+            if (!currentTrigger) {
+                this.sequenceTrigger.push({ index: i });
+            } else {
+                this.sequenceTrigger = this.sequenceTrigger.filter(
+                    (item) => item.index != i
+                );
+            }
+        },
+        isActive(i) {
+            return this.sequenceTrigger.find((item) => item.index == i);
         },
     },
 };
@@ -69,7 +121,8 @@ export default {
                 background-color: #e5e5e5;
             }
 
-            &:active {
+            &:active,
+            &.active {
                 background-color: #d5d5d5;
             }
         }

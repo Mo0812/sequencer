@@ -1,9 +1,21 @@
 <template>
     <div class="sequencer">
         <h2>Sequencer</h2>
-        <input v-model="bpm" />
-        <input type="button" value="Start Sequence" @click="sequence" />
-        <input type="button" value="Stop Sequence" @click="stopSequence" />
+        <section class="controls">
+            <input v-model="bpm" />
+            <input
+                :class="playState == 'start' ? 'active' : ''"
+                type="button"
+                value="Start Sequence"
+                @click="startSequence"
+            />
+            <input
+                :class="playState == 'stop' ? 'active' : ''"
+                type="button"
+                value="Stop Sequence"
+                @click="stopSequence"
+            />
+        </section>
         <section class="pattern">
             <div
                 v-for="i in 16"
@@ -13,7 +25,13 @@
                 @click="setTrigger(i)"
             >
                 {{ i }}
+                <a class="settings" href="#" @click="showTriggerSettings(i)"
+                    >Settings</a
+                >
             </div>
+        </section>
+        <section class="trigger-settings">
+            {{ currentTrigger }}
         </section>
     </div>
 </template>
@@ -27,21 +45,32 @@ export default {
         return {
             bpm: 90,
             sequenceTrigger: [],
+            sequence: null,
+            playState: "stop",
+            showTriggerIndex: null,
+            synth: null,
         };
+    },
+    created() {
+        this.synth = new Tone.Synth().toDestination();
     },
     computed: {
         parsedSequenceTrigger() {
             const sequence = [];
             for (var i = 0; i < 16; i++) {
-                if (this.isActive(i)) {
+                const currentTrigger = this.getActive(i);
+                if (currentTrigger) {
                     sequence.push({
                         time: "0:0:" + i,
-                        note: "C4",
-                        duration: "16n",
+                        note: currentTrigger.note,
+                        duration: currentTrigger.duration,
                     });
                 }
             }
             return sequence;
+        },
+        currentTrigger() {
+            return this.getActive(this.showTriggerIndex);
         },
     },
     watch: {
@@ -51,14 +80,33 @@ export default {
             },
             immediate: true,
         },
+        sequenceTrigger: {
+            handler(val, oldVal) {
+                if (this.sequence) {
+                    console.log(val, oldVal);
+                    const newTrigger = val.filter(
+                        (item) =>
+                            !oldVal.some(
+                                (oldItem) => oldItem.index == item.index
+                            )
+                    );
+                    console.log(newTrigger);
+                    this.sequence.add("0:0:15", {
+                        time: "0:0:15",
+                        note: "F4",
+                        duration: "16n",
+                    });
+                }
+            },
+            deep: true,
+        },
     },
     methods: {
-        sequence() {
-            const synth = new Tone.Synth().toDestination();
-            const seq = new Tone.Part(
+        startSequence() {
+            this.sequence = new Tone.Part(
                 (time, value) => {
                     console.log(time, value);
-                    synth.triggerAttackRelease(
+                    this.synth.triggerAttackRelease(
                         value.note,
                         value.duration,
                         time,
@@ -71,26 +119,39 @@ export default {
                     { time: "0:0:2", note: "A4", duration: "8n" },
                 ]*/
             ).start(0);
-            seq.loop = true;
+            this.sequence.loop = true;
             Tone.Transport.start();
+            this.playState = "start";
         },
         stopSequence() {
+            this.sequence.clear();
             Tone.Transport.stop();
+            this.playState = "stop";
         },
         setTrigger(i) {
             const currentTrigger = this.sequenceTrigger.find(
                 (item) => item.index == i
             );
             if (!currentTrigger) {
-                this.sequenceTrigger.push({ index: i });
+                this.sequenceTrigger.push({
+                    index: i,
+                    note: "C4",
+                    duration: "16n",
+                });
             } else {
                 this.sequenceTrigger = this.sequenceTrigger.filter(
                     (item) => item.index != i
                 );
             }
         },
-        isActive(i) {
+        showTriggerSettings(i) {
+            this.showTriggerIndex = i;
+        },
+        getActive(i) {
             return this.sequenceTrigger.find((item) => item.index == i);
+        },
+        isActive(i) {
+            return this.getActive(i);
         },
     },
 };
@@ -117,6 +178,8 @@ export default {
             justify-content: center;
             align-items: center;
 
+            position: relative;
+
             &:hover {
                 background-color: #e5e5e5;
             }
@@ -124,6 +187,12 @@ export default {
             &:active,
             &.active {
                 background-color: #d5d5d5;
+            }
+
+            & > .settings {
+                position: absolute;
+                bottom: 0;
+                right: 0;
             }
         }
     }

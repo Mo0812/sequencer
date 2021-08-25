@@ -80,22 +80,34 @@ export default {
             },
             immediate: true,
         },
-        sequenceTrigger: {
+        parsedSequenceTrigger: {
             handler(val, oldVal) {
                 if (this.sequence) {
-                    console.log(val, oldVal);
-                    const newTrigger = val.filter(
-                        (item) =>
-                            !oldVal.some(
-                                (oldItem) => oldItem.index == item.index
-                            )
-                    );
-                    console.log(newTrigger);
-                    this.sequence.add("0:0:15", {
-                        time: "0:0:15",
-                        note: "F4",
-                        duration: "16n",
+                    // Replace existing trigger
+                    val.map((trigger) => {
+                        if (this.sequence.at(trigger.time)) {
+                            // Replace if changed
+                            this.sequence.at(trigger.time, trigger);
+                        }
                     });
+
+                    // Detect and add new trigger
+                    const newTrigger = val.find(
+                        (item) =>
+                            !oldVal.some((oldItem) => oldItem.time == item.time)
+                    );
+                    if (newTrigger) {
+                        this.sequence.add(newTrigger.time, newTrigger);
+                    }
+
+                    // Detect and remove old trigger
+                    const removedTrigger = oldVal.find(
+                        (oldItem) =>
+                            !val.some((item) => item.time == oldItem.time)
+                    );
+                    if (removedTrigger) {
+                        this.sequence.remove(removedTrigger.time);
+                    }
                 }
             },
             deep: true,
@@ -105,7 +117,6 @@ export default {
         startSequence() {
             this.sequence = new Tone.Part(
                 (time, value) => {
-                    console.log(time, value);
                     this.synth.triggerAttackRelease(
                         value.note,
                         value.duration,

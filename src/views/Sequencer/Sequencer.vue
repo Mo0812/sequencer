@@ -1,21 +1,26 @@
 <template>
     <div class="sequencer">
-        <h2>Sequencer</h2>
+        <header class="header">
+            <h2>Sequencer</h2>
+        </header>
         <section class="controls">
-            <input v-model="bpm" />
-            <input
-                :class="playState == 'start' ? 'active' : ''"
-                type="button"
-                value="Start Sequence"
-                @click="startSequence"
-            />
-            <input
-                :class="playState == 'stop' ? 'active' : ''"
-                type="button"
-                value="Stop Sequence"
-                @click="stopSequence"
-            />
-            <p>State: {{ playState }}</p>
+            <div class="play-controls">
+                <input class="bpm" v-model="bpm" />
+                <div
+                    class="play"
+                    :class="playState == 'start' ? 'active' : ''"
+                    @click="startSequence"
+                >
+                    <font-awesome-icon icon="play" />
+                </div>
+                <div
+                    class="stop"
+                    :class="playState == 'stop' ? 'active' : ''"
+                    @click="stopSequence"
+                >
+                    <font-awesome-icon icon="stop" />
+                </div>
+            </div>
         </section>
         <section class="pattern">
             <div
@@ -25,12 +30,17 @@
                 :key="i"
             >
                 <a class="trigger-point" @click="setTrigger(i)">{{ i }}</a>
-                <a class="settings" @click="showTriggerSettings(i)">Settings</a>
+                <a
+                    class="settings"
+                    v-if="isActive(i)"
+                    @click="showTriggerSettings(i)"
+                    ><font-awesome-icon icon="cog"
+                /></a>
             </div>
         </section>
         <section class="trigger-settings">
             <template v-if="selectedActiveTrigger">
-                {{ selectedActiveTrigger }}
+                <h5>Trigger {{ selectedActiveTrigger.index }}</h5>
                 <select v-model="selectedActiveNoteValue">
                     <option v-for="note in notes" :key="note" :value="note">
                         {{ note }}
@@ -44,6 +54,8 @@
 
 <script>
 import * as Tone from "tone";
+
+import "./Sequencer.scss";
 
 export default {
     name: "Sequencer",
@@ -222,49 +234,3 @@ export default {
     },
 };
 </script>
-
-<style lang="scss">
-.sequencer {
-    .pattern {
-        width: 500px;
-        height: 500px;
-        margin: 0 auto;
-        display: grid;
-        grid-template: repeat(4, 25%) / repeat(4, 25%);
-        column-gap: 10px;
-        row-gap: 10px;
-
-        .trigger {
-            cursor: pointer;
-
-            background-color: #f0f0f0;
-            padding: 10px;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            position: relative;
-
-            &:hover {
-                background-color: #e5e5e5;
-            }
-
-            &:active,
-            &.active {
-                background-color: #d5d5d5;
-            }
-
-            & > .settings {
-                position: absolute;
-                bottom: 0;
-                right: 0;
-            }
-        }
-    }
-
-    .trigger-settings {
-        margin-top: 3rem;
-    }
-}
-</style>

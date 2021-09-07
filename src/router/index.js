@@ -7,7 +7,7 @@ const routes = [
     {
         path: "/",
         name: "Sequencer",
-        component: () => import("../views/Sequencer.vue"),
+        component: () => import("../views/Sequencer/Sequencer.vue"),
     },
     {
         path: "/about",

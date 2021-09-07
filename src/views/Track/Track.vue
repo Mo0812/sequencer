@@ -403,6 +403,7 @@ export default {
         },
         synthModel: {
             handler(val, oldVal) {
+                // TODO: Add effects to new synth if applied before
                 console.log(val);
                 if (val !== oldVal) {
                     if (val == "synth") {

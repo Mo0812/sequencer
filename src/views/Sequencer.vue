@@ -15,6 +15,7 @@
                 value="Stop Sequence"
                 @click="stopSequence"
             />
+            <p>State: {{ playState }}</p>
         </section>
         <section class="pattern">
             <div
@@ -22,16 +23,21 @@
                 class="trigger"
                 :class="isActive(i) ? 'active' : ''"
                 :key="i"
-                @click="setTrigger(i)"
             >
-                {{ i }}
-                <a class="settings" href="#" @click="showTriggerSettings(i)"
-                    >Settings</a
-                >
+                <a class="trigger-point" @click="setTrigger(i)">{{ i }}</a>
+                <a class="settings" @click="showTriggerSettings(i)">Settings</a>
             </div>
         </section>
         <section class="trigger-settings">
-            {{ currentTrigger }}
+            <template v-if="selectedActiveTrigger">
+                {{ selectedActiveTrigger }}
+                <select v-model="selectedActiveNoteValue">
+                    <option v-for="note in notes" :key="note" :value="note">
+                        {{ note }}
+                    </option>
+                </select>
+                <input type="number" v-model="selectedActiveNoteHeight" />
+            </template>
         </section>
     </div>
 </template>
@@ -49,6 +55,20 @@ export default {
             playState: "stop",
             showTriggerIndex: null,
             synth: null,
+            notes: [
+                "C",
+                "C#",
+                "D",
+                "D#",
+                "E",
+                "F",
+                "F#",
+                "G",
+                "G#",
+                "A",
+                "A#",
+                "B",
+            ],
         };
     },
     created() {
@@ -69,8 +89,43 @@ export default {
             }
             return sequence;
         },
-        currentTrigger() {
+        selectedActiveTrigger() {
             return this.getActive(this.showTriggerIndex);
+        },
+        selectedActiveNoteValue: {
+            get() {
+                const trigger = this.selectedActiveTrigger;
+                if (trigger) {
+                    const note = trigger.note;
+                    const noteValue = note.substring(0, note.length - 1);
+                    return noteValue;
+                }
+                return null;
+            },
+            set(newValue) {
+                const trigger = this.selectedActiveTrigger;
+                if (trigger) {
+                    trigger.note =
+                        newValue + "" + this.selectedActiveNoteHeight;
+                }
+            },
+        },
+        selectedActiveNoteHeight: {
+            get() {
+                const trigger = this.selectedActiveTrigger;
+                if (trigger) {
+                    const note = trigger.note;
+                    const noteHeight = note.slice(-1);
+                    return noteHeight;
+                }
+                return null;
+            },
+            set(newValue) {
+                const trigger = this.selectedActiveTrigger;
+                if (trigger) {
+                    trigger.note = this.selectedActiveNoteValue + "" + newValue;
+                }
+            },
         },
     },
     watch: {
@@ -206,6 +261,10 @@ export default {
                 right: 0;
             }
         }
+    }
+
+    .trigger-settings {
+        margin-top: 3rem;
     }
 }
 </style>

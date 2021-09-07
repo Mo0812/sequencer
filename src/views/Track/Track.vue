@@ -6,86 +6,118 @@
         <div class="main">
             <aside class="leftbar">
                 <section class="track-controls">
-                    <h3>Track controls</h3>
-                    <article class="effect distortion">
-                        <header>
-                            Distortion
-                            <el-switch
-                                v-model="effects.distortion.enabled"
-                            ></el-switch>
-                        </header>
-                        <div class="controls">
-                            <div class="control">
-                                <p class="label">Amount</p>
-                                <div class="value">
-                                    <el-slider
-                                        v-model="
-                                            effects.distortion.properties
-                                                .distortion
-                                        "
-                                        :min="0"
-                                        :max="100"
-                                    ></el-slider>
+                    <h4>Track controls</h4>
+                    <el-tabs
+                        tab-position="left"
+                        v-model="trackControlsActiveTab"
+                    >
+                        <el-tab-pane name="effects">
+                            <span slot="label">
+                                <font-awesome-icon icon="weight" />
+                                Effects
+                            </span>
+                            <article class="effect distortion">
+                                <header>
+                                    Distortion
+                                    <el-switch
+                                        v-model="effects.distortion.enabled"
+                                    ></el-switch>
+                                </header>
+                                <div class="controls">
+                                    <div class="control">
+                                        <p class="label">Amount</p>
+                                        <div class="value">
+                                            <el-slider
+                                                v-model="
+                                                    effects.distortion
+                                                        .properties.distortion
+                                                "
+                                                :min="0"
+                                                :max="100"
+                                            ></el-slider>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="effect delay">
-                        <header>
-                            Delay
-                            <el-switch
-                                v-model="effects.delay.enabled"
-                            ></el-switch>
-                        </header>
-                        <div class="controls">
-                            <div class="control">
-                                <p class="label">Time</p>
-                                <div class="value">
-                                    <el-slider
-                                        v-model="
-                                            effects.delay.properties.delayTime
-                                        "
-                                        :min="0"
-                                        :max="100"
-                                    ></el-slider>
+                            </article>
+                            <article class="effect delay">
+                                <header>
+                                    Delay
+                                    <el-switch
+                                        v-model="effects.delay.enabled"
+                                    ></el-switch>
+                                </header>
+                                <div class="controls">
+                                    <div class="control">
+                                        <p class="label">Time</p>
+                                        <div class="value">
+                                            <el-slider
+                                                v-model="
+                                                    effects.delay.properties
+                                                        .delayTime
+                                                "
+                                                :min="0"
+                                                :max="100"
+                                            ></el-slider>
+                                        </div>
+                                    </div>
+                                    <div class="control">
+                                        <p class="label">Feedback</p>
+                                        <div class="value">
+                                            <el-slider
+                                                v-model="
+                                                    effects.delay.properties
+                                                        .feedback
+                                                "
+                                                :min="0"
+                                                :max="100"
+                                            ></el-slider>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="control">
-                                <p class="label">Feedback</p>
-                                <div class="value">
-                                    <el-slider
-                                        v-model="
-                                            effects.delay.properties.feedback
-                                        "
-                                        :min="0"
-                                        :max="100"
-                                    ></el-slider>
+                            </article>
+                            <article class="effect reverb">
+                                <header>
+                                    Reverb
+                                    <el-switch
+                                        v-model="effects.reverb.enabled"
+                                    ></el-switch>
+                                </header>
+                                <div class="controls">
+                                    <div class="control">
+                                        <p class="label">Decay</p>
+                                        <div class="value">
+                                            <el-slider
+                                                v-model="
+                                                    effects.reverb.properties
+                                                        .decay
+                                                "
+                                                :min="0"
+                                                :max="100"
+                                            ></el-slider>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </article>
-                    <article class="effect reverb">
-                        <header>
-                            Reverb
-                            <el-switch
-                                v-model="effects.reverb.enabled"
-                            ></el-switch>
-                        </header>
-                        <div class="controls">
-                            <div class="control">
-                                <p class="label">Decay</p>
-                                <div class="value">
-                                    <el-slider
-                                        v-model="
-                                            effects.reverb.properties.decay
-                                        "
-                                        :min="0"
-                                        :max="100"
-                                    ></el-slider>
-                                </div>
-                            </div>
-                        </div>
-                    </article>
+                            </article>
+                        </el-tab-pane>
+                        <el-tab-pane name="sound">
+                            <span slot="label">
+                                <font-awesome-icon icon="volume-up" /> Sound
+                            </span>
+                            <el-select v-model="synthModel">
+                                <el-option key="synth" value="synth"
+                                    >Synth</el-option
+                                >
+                                <el-option key="monoSynth" value="monoSynth"
+                                    >Mono Synth</el-option
+                                >
+                            </el-select>
+                            <el-slider
+                                v-model="volume"
+                                :min="0"
+                                :max="100"
+                            ></el-slider>
+                        </el-tab-pane>
+                    </el-tabs>
                 </section>
             </aside>
             <main class="main-part">
@@ -157,6 +189,8 @@ export default {
             sequence: null,
             showTriggerIndex: null,
             synth: null,
+            synthModel: "synth",
+            volume: 100,
             notes: [
                 "C",
                 "C#",
@@ -195,6 +229,7 @@ export default {
                     enabled: false,
                 },
             },
+            trackControlsActiveTab: "effects",
         };
     },
     created() {
@@ -365,6 +400,30 @@ export default {
                 this.effects.reverb.instance.set(val);
             },
             deep: true,
+        },
+        synthModel: {
+            handler(val, oldVal) {
+                console.log(val);
+                if (val !== oldVal) {
+                    if (val == "synth") {
+                        this.synth = new Tone.Synth().toDestination();
+                    } else if (val == "monoSynth") {
+                        this.synth = new Tone.MonoSynth({
+                            oscillator: {
+                                type: "square",
+                            },
+                            envelope: {
+                                attack: 0.1,
+                            },
+                        }).toDestination();
+                    }
+                }
+            },
+        },
+        volume: {
+            handler(val) {
+                this.synth.volume.val = val;
+            },
         },
     },
     methods: {

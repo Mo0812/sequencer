@@ -1,176 +1,37 @@
 .sequencer {
-    display: grid;
-    grid-template-rows: auto 1fr;
-    grid-template-columns: 1fr;
-
-    .header {
-        grid-row: 1 / 2;
-        grid-column: 1 / 1;
-    }
-
-    .main {
-        grid-row: 2 / 3;
-        grid-column: 1 / 1;
-
-        display: grid;
-        grid-template-rows: 1fr;
-        grid-template-columns: 1fr 2fr 1fr;
-
-        .main-part {
-            grid-column: 2 / 3;
-        }
-
-        .leftbar {
-            grid-column: 1 / 2;
-        }
-
-        .rightbar {
-            grid-column: 3 / 4;
-        }
-
-        .sequence-controls {
-            .play-controls {
-                display: grid;
-                grid-template: 1fr 1fr / repeat(3, 1fr);
-
-                .bpm {
-                    grid-row: 1 / 1;
-                    grid-column: 1 / 4;
-                    width: 100%;
-                }
-
-                .play,
-                .stop,
-                .tap {
-                    grid-row: 2 / 2;
-
-                    justify-self: center;
-
-                    &.active {
-                        color: red;
-                    }
-                }
-
-                .tap {
-                    grid-column: 3 / 4;
-                }
-
-                .play {
-                    grid-column: 1 / 2;
-                }
-
-                .stop {
-                    grid-column: 2 / 3;
-                }
-            }
-        }
-
-        .track-controls {
-            .effect {
-                header {
-                    font-weight: bold;
-                }
-
-                .controls {
-                    .control {
-                        display: grid;
-                        grid-template: 1fr / 1fr 2fr;
-
-                        align-items: center;
-
-                        .label {
-                            grid-column: 1 / 2;
-                            margin: 0;
-                            padding: 0;
-                        }
-
-                        .value {
-                            grid-column: 2 / 3;
-                        }
-                    }
-                }
-            }
-        }
-
-        .trigger-settings {
-            h5 {
-                margin: 0;
-                margin-bottom: 1rem;
-            }
-
-            .note {
-                display: grid;
-                grid-template: 1fr / 1fr 1fr;
-
-                .note-value {
-                    input {
-                        border-top-right-radius: 0;
-                        border-bottom-right-radius: 0;
-                        border-right: 0;
-                    }
-                }
-
-                .note-height {
-                    input {
-                        border-top-left-radius: 0;
-                        border-bottom-left-radius: 0;
-                    }
-                }
-            }
-        }
-
-        .pattern {
-            width: 500px;
-            height: 500px;
-            margin: 0 auto;
+    .sequence-controls {
+        .play-controls {
             display: grid;
-            grid-template: repeat(4, 1fr) / repeat(4, 1fr);
-            column-gap: 10px;
-            row-gap: 10px;
+            grid-template: 1fr 1fr / repeat(3, 1fr);
 
-            .trigger {
-                cursor: pointer;
+            .bpm {
+                grid-row: 1 / 1;
+                grid-column: 1 / 4;
+                width: 100%;
+            }
 
-                background-color: #f0f0f0;
-                padding: 10px;
+            .play,
+            .stop,
+            .tap {
+                grid-row: 2 / 2;
 
-                display: flex;
-                justify-content: center;
-                align-items: center;
+                justify-self: center;
 
-                position: relative;
-
-                &:hover {
-                    background-color: #e5e5e5;
-
-                    & > .settings {
-                        display: block;
-                    }
-                }
-
-                &:active,
                 &.active {
-                    background-color: #d5d5d5;
+                    color: red;
                 }
+            }
 
-                &.detail {
-                    background-color: rgb(120, 201, 177);
-                }
+            .tap {
+                grid-column: 3 / 4;
+            }
 
-                & > .trigger-point {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    width: 100%;
-                    height: 100%;
-                }
+            .play {
+                grid-column: 1 / 2;
+            }
 
-                & > .settings {
-                    display: none;
-                    position: absolute;
-                    bottom: 2.5px;
-                    right: 2.5px;
-                }
+            .stop {
+                grid-column: 2 / 3;
             }
         }
     }

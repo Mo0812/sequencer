@@ -5,48 +5,61 @@
         </header>
         <section class="controls">
             <div class="play-controls">
-                <input class="bpm" v-model="bpm" />
-                <div
+                <el-input-number class="bpm" v-model="bpm" />
+                <el-button class="tap" :disabled="true">
+                    <font-awesome-icon icon="clock" />
+                </el-button>
+                <el-button
                     class="play"
                     :class="playState == 'start' ? 'active' : ''"
                     @click="startSequence"
                 >
                     <font-awesome-icon icon="play" />
-                </div>
-                <div
+                </el-button>
+                <el-button
                     class="stop"
                     :class="playState == 'stop' ? 'active' : ''"
                     @click="stopSequence"
                 >
                     <font-awesome-icon icon="stop" />
-                </div>
+                </el-button>
             </div>
         </section>
         <section class="pattern">
             <div
                 v-for="i in 16"
                 class="trigger"
-                :class="isActive(i) ? 'active' : ''"
+                :class="isActive(i) ? 'active' : isDetail(i) ? 'detail' : ''"
                 :key="i"
             >
-                <a class="trigger-point" @click="setTrigger(i)">{{ i }}</a>
-                <a
-                    class="settings"
-                    v-if="isActive(i)"
-                    @click="showTriggerSettings(i)"
+                <a class="trigger-point" @click="toggleTrigger(i)">{{ i }}</a>
+                <a class="settings" @click="setTriggerSettings(i)"
                     ><font-awesome-icon icon="cog"
                 /></a>
             </div>
         </section>
         <section class="trigger-settings">
-            <template v-if="selectedActiveTrigger">
-                <h5>Trigger {{ selectedActiveTrigger.index }}</h5>
-                <select v-model="selectedActiveNoteValue">
-                    <option v-for="note in notes" :key="note" :value="note">
-                        {{ note }}
-                    </option>
-                </select>
-                <input type="number" v-model="selectedActiveNoteHeight" />
+            <template v-if="selectedDetailTrigger">
+                <h5>Trigger {{ selectedDetailTrigger.index }}</h5>
+                <div class="note">
+                    <el-select
+                        class="note-value"
+                        v-model="selectedDetailTriggerNoteValue"
+                    >
+                        <el-option
+                            v-for="note in notes"
+                            :key="note"
+                            :value="note"
+                        >
+                            {{ note }}
+                        </el-option>
+                    </el-select>
+                    <el-input-number
+                        class="note-height"
+                        v-model="selectedDetailTriggerNoteHeight"
+                        controls-position="right"
+                    />
+                </div>
             </template>
         </section>
     </div>
@@ -91,7 +104,7 @@ export default {
             const sequence = [];
             for (var i = 0; i < 16; i++) {
                 const currentTrigger = this.getActive(i);
-                if (currentTrigger) {
+                if (currentTrigger && currentTrigger.enabled) {
                     sequence.push({
                         time: "0:0:" + i,
                         note: currentTrigger.note,
@@ -101,12 +114,12 @@ export default {
             }
             return sequence;
         },
-        selectedActiveTrigger() {
-            return this.getActive(this.showTriggerIndex);
+        selectedDetailTrigger() {
+            return this.getTrigger(this.showTriggerIndex);
         },
-        selectedActiveNoteValue: {
+        selectedDetailTriggerNoteValue: {
             get() {
-                const trigger = this.selectedActiveTrigger;
+                const trigger = this.selectedDetailTrigger;
                 if (trigger) {
                     const note = trigger.note;
                     const noteValue = note.substring(0, note.length - 1);
@@ -115,16 +128,16 @@ export default {
                 return null;
             },
             set(newValue) {
-                const trigger = this.selectedActiveTrigger;
+                const trigger = this.selectedDetailTrigger;
                 if (trigger) {
                     trigger.note =
-                        newValue + "" + this.selectedActiveNoteHeight;
+                        newValue + "" + this.selectedDetailTriggerNoteHeight;
                 }
             },
         },
-        selectedActiveNoteHeight: {
+        selectedDetailTriggerNoteHeight: {
             get() {
-                const trigger = this.selectedActiveTrigger;
+                const trigger = this.selectedDetailTrigger;
                 if (trigger) {
                     const note = trigger.note;
                     const noteHeight = note.slice(-1);
@@ -133,9 +146,10 @@ export default {
                 return null;
             },
             set(newValue) {
-                const trigger = this.selectedActiveTrigger;
+                const trigger = this.selectedDetailTrigger;
                 if (trigger) {
-                    trigger.note = this.selectedActiveNoteValue + "" + newValue;
+                    trigger.note =
+                        this.selectedDetailTriggerNoteValue + "" + newValue;
                 }
             },
         },
@@ -206,30 +220,51 @@ export default {
             Tone.Transport.stop();
             this.playState = "stop";
         },
-        setTrigger(i) {
-            const currentTrigger = this.sequenceTrigger.find(
-                (item) => item.index == i
-            );
+        createTrigger(i, enabled = true) {
+            this.sequenceTrigger.push({
+                index: i,
+                note: "C4",
+                duration: "16n",
+                enabled: enabled,
+            });
+        },
+        toggleTrigger(i) {
+            let enabled = true;
+            const currentTrigger = this.getTrigger(i);
             if (!currentTrigger) {
-                this.sequenceTrigger.push({
-                    index: i,
-                    note: "C4",
-                    duration: "16n",
-                });
+                this.createTrigger(i);
             } else {
-                this.sequenceTrigger = this.sequenceTrigger.filter(
-                    (item) => item.index != i
-                );
+                enabled = !currentTrigger.enabled;
+                currentTrigger.enabled = !currentTrigger.enabled;
+            }
+
+            if (enabled) {
+                this.showTriggerSettings(i);
             }
         },
         showTriggerSettings(i) {
             this.showTriggerIndex = i;
         },
-        getActive(i) {
+        setTriggerSettings(i) {
+            const existingTrigger = this.getTrigger(i);
+            if (!existingTrigger) {
+                this.createTrigger(i, false);
+            }
+            this.showTriggerSettings(i);
+        },
+        getTrigger(i) {
             return this.sequenceTrigger.find((item) => item.index == i);
+        },
+        getActive(i) {
+            return this.sequenceTrigger.find(
+                (item) => item.index == i && item.enabled
+            );
         },
         isActive(i) {
             return this.getActive(i);
+        },
+        isDetail(i) {
+            return this.showTriggerIndex == i;
         },
     },
 };

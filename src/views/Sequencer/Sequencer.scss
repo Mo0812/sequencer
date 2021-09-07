@@ -18,19 +18,32 @@
 
             .bpm {
                 grid-row: 1 / 1;
-                grid-column: 1 / 3;
+                grid-column: 1 / 4;
+                width: 100%;
             }
 
             .play,
-            .stop {
+            .stop,
+            .tap {
                 grid-row: 2 / 2;
-                justify-self: center;
 
-                cursor: pointer;
+                justify-self: center;
 
                 &.active {
                     color: red;
                 }
+            }
+
+            .tap {
+                grid-column: 3 / 4;
+            }
+
+            .play {
+                grid-column: 1 / 2;
+            }
+
+            .stop {
+                grid-column: 2 / 3;
             }
         }
     }
@@ -42,6 +55,26 @@
         h5 {
             margin: 0;
             margin-bottom: 1rem;
+        }
+
+        .note {
+            display: grid;
+            grid-template: 1fr / 1fr 1fr;
+
+            .note-value {
+                input {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    border-right: 0;
+                }
+            }
+
+            .note-height {
+                input {
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                }
+            }
         }
     }
 
@@ -76,6 +109,10 @@
             &:active,
             &.active {
                 background-color: #d5d5d5;
+            }
+
+            &.detail {
+                background-color: azure;
             }
 
             & > .trigger-point {

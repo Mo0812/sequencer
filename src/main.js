@@ -7,14 +7,14 @@ import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
-import Buefy from "buefy";
-import "buefy/dist/buefy.css";
+import ElementUI from "element-ui";
+import "element-ui/lib/theme-chalk/index.css";
 
 library.add(fas);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 
-Vue.use(Buefy);
+Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
 

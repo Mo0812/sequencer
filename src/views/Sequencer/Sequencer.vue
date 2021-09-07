@@ -3,65 +3,165 @@
         <header class="header">
             <h2>Sequencer</h2>
         </header>
-        <section class="controls">
-            <div class="play-controls">
-                <el-input-number class="bpm" v-model="bpm" />
-                <el-button class="tap" :disabled="true">
-                    <font-awesome-icon icon="clock" />
-                </el-button>
-                <el-button
-                    class="play"
-                    :class="playState == 'start' ? 'active' : ''"
-                    @click="startSequence"
-                >
-                    <font-awesome-icon icon="play" />
-                </el-button>
-                <el-button
-                    class="stop"
-                    :class="playState == 'stop' ? 'active' : ''"
-                    @click="stopSequence"
-                >
-                    <font-awesome-icon icon="stop" />
-                </el-button>
-            </div>
-        </section>
-        <section class="pattern">
-            <div
-                v-for="i in 16"
-                class="trigger"
-                :class="isActive(i) ? 'active' : isDetail(i) ? 'detail' : ''"
-                :key="i"
-            >
-                <a class="trigger-point" @click="toggleTrigger(i)">{{ i }}</a>
-                <a class="settings" @click="setTriggerSettings(i)"
-                    ><font-awesome-icon icon="cog"
-                /></a>
-            </div>
-        </section>
-        <section class="trigger-settings">
-            <template v-if="selectedDetailTrigger">
-                <h5>Trigger {{ selectedDetailTrigger.index }}</h5>
-                <div class="note">
-                    <el-select
-                        class="note-value"
-                        v-model="selectedDetailTriggerNoteValue"
-                    >
-                        <el-option
-                            v-for="note in notes"
-                            :key="note"
-                            :value="note"
+        <div class="main">
+            <aside class="leftbar">
+                <section class="sequence-controls">
+                    <h3>Sequence controls</h3>
+                    <div class="play-controls">
+                        <el-input-number class="bpm" v-model="bpm" />
+                        <el-button class="tap" :disabled="true">
+                            <font-awesome-icon icon="clock" />
+                        </el-button>
+                        <el-button
+                            class="play"
+                            :class="playState == 'start' ? 'active' : ''"
+                            @click="startSequence"
                         >
-                            {{ note }}
-                        </el-option>
-                    </el-select>
-                    <el-input-number
-                        class="note-height"
-                        v-model="selectedDetailTriggerNoteHeight"
-                        controls-position="right"
-                    />
-                </div>
-            </template>
-        </section>
+                            <font-awesome-icon icon="play" />
+                        </el-button>
+                        <el-button
+                            class="stop"
+                            :class="playState == 'stop' ? 'active' : ''"
+                            @click="stopSequence"
+                        >
+                            <font-awesome-icon icon="stop" />
+                        </el-button>
+                    </div>
+                </section>
+                <section class="track-controls">
+                    <h3>Track controls</h3>
+                    <article class="effect distortion">
+                        <header>
+                            Distortion
+                            <el-switch
+                                v-model="effects.distortion.enabled"
+                            ></el-switch>
+                        </header>
+                        <div class="controls">
+                            <div class="control">
+                                <p class="label">Amount</p>
+                                <div class="value">
+                                    <el-slider
+                                        v-model="
+                                            effects.distortion.properties
+                                                .distortion
+                                        "
+                                        :min="0"
+                                        :max="100"
+                                    ></el-slider>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="effect delay">
+                        <header>
+                            Delay
+                            <el-switch
+                                v-model="effects.delay.enabled"
+                            ></el-switch>
+                        </header>
+                        <div class="controls">
+                            <div class="control">
+                                <p class="label">Time</p>
+                                <div class="value">
+                                    <el-slider
+                                        v-model="
+                                            effects.delay.properties.delayTime
+                                        "
+                                        :min="0"
+                                        :max="100"
+                                    ></el-slider>
+                                </div>
+                            </div>
+                            <div class="control">
+                                <p class="label">Feedback</p>
+                                <div class="value">
+                                    <el-slider
+                                        v-model="
+                                            effects.delay.properties.feedback
+                                        "
+                                        :min="0"
+                                        :max="100"
+                                    ></el-slider>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="effect reverb">
+                        <header>
+                            Reverb
+                            <el-switch
+                                v-model="effects.reverb.enabled"
+                            ></el-switch>
+                        </header>
+                        <div class="controls">
+                            <div class="control">
+                                <p class="label">Decay</p>
+                                <div class="value">
+                                    <el-slider
+                                        v-model="
+                                            effects.reverb.properties.decay
+                                        "
+                                        :min="0"
+                                        :max="100"
+                                    ></el-slider>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                </section>
+            </aside>
+            <main class="main-part">
+                <section class="pattern">
+                    <div
+                        v-for="i in 16"
+                        class="trigger"
+                        :class="
+                            isActive(i) ? 'active' : isDetail(i) ? 'detail' : ''
+                        "
+                        :key="i"
+                    >
+                        <a class="trigger-point" @click="toggleTrigger(i)">{{
+                            i
+                        }}</a>
+                        <a class="settings" @click="setTriggerSettings(i)"
+                            ><font-awesome-icon icon="cog"
+                        /></a>
+                    </div>
+                </section>
+            </main>
+            <aside class="rightbar">
+                <section class="trigger-settings">
+                    <template v-if="selectedDetailTrigger">
+                        <article class="trigger-note">
+                            <h3>
+                                Trigger settings:
+                                <u>Trigger {{ selectedDetailTrigger.index }}</u>
+                            </h3>
+                            <div class="note">
+                                <el-select
+                                    class="note-value"
+                                    v-model="selectedDetailTriggerNoteValue"
+                                >
+                                    <el-option
+                                        v-for="note in notes"
+                                        :key="note"
+                                        :value="note"
+                                    >
+                                        {{ note }}
+                                    </el-option>
+                                </el-select>
+                                <el-input-number
+                                    class="note-height"
+                                    v-model="selectedDetailTriggerNoteHeight"
+                                    controls-position="right"
+                                />
+                            </div>
+                        </article>
+                    </template>
+                </section>
+            </aside>
+        </div>
     </div>
 </template>
 
@@ -94,10 +194,47 @@ export default {
                 "A#",
                 "B",
             ],
+            effects: {
+                distortion: {
+                    instance: null,
+                    properties: {
+                        distortion: 40,
+                    },
+                    enabled: false,
+                },
+                delay: {
+                    instance: null,
+                    properties: {
+                        delayTime: 12.5,
+                        feedback: 50,
+                    },
+                    enabled: false,
+                },
+                reverb: {
+                    instance: null,
+                    properties: {
+                        decay: 0,
+                    },
+                    enabled: false,
+                },
+            },
         };
     },
     created() {
         this.synth = new Tone.Synth().toDestination();
+
+        this.effects.distortion.instance = new Tone.Distortion(
+            this.effects.distortion.properties.distortion / 100
+        ).toDestination();
+
+        this.effects.delay.instance = new Tone.FeedbackDelay(
+            this.effects.delay.properties.delayTime / 100,
+            this.effects.delay.properties.feedback / 100
+        ).toDestination();
+
+        this.effects.reverb.instance = new Tone.Reverb(
+            this.effects.reverb.properties.decay
+        ).toDestination();
     },
     computed: {
         parsedSequenceTrigger() {
@@ -190,6 +327,59 @@ export default {
                         this.sequence.remove(removedTrigger.time);
                     }
                 }
+            },
+            deep: true,
+        },
+        "effects.distortion.enabled": {
+            handler(val) {
+                if (val) {
+                    this.synth.connect(this.effects.distortion.instance);
+                } else {
+                    this.synth.disconnect(this.effects.distortion.instance);
+                }
+            },
+        },
+        "effects.distortion.properties": {
+            handler(val) {
+                console.log("setting distortion to: ", val);
+                this.effects.distortion.instance.set({
+                    distortion: val.distortion / 100,
+                });
+            },
+            deep: true,
+        },
+        "effects.delay.enabled": {
+            handler(val) {
+                if (val) {
+                    this.synth.connect(this.effects.delay.instance);
+                } else {
+                    this.synth.disconnect(this.effects.delay.instance);
+                }
+            },
+        },
+        "effects.delay.properties": {
+            handler(val) {
+                console.log("setting delay settings to: ", val);
+                this.effects.delay.instance.set({
+                    delayTime: val.delayTime / 100,
+                    feedback: val.feedback / 100,
+                });
+            },
+            deep: true,
+        },
+        "effects.reverb.enabled": {
+            handler(val) {
+                if (val) {
+                    this.synth.connect(this.effects.reverb.instance);
+                } else {
+                    this.synth.disconnect(this.effects.reverb.instance);
+                }
+            },
+        },
+        "effects.reverb.properties": {
+            handler(val) {
+                console.log("setting reverb to: ", val);
+                this.effects.reverb.instance.set(val);
             },
             deep: true,
         },

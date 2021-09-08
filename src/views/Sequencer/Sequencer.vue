@@ -47,8 +47,6 @@
 </template>
 
 <script>
-import * as Tone from "tone";
-
 import Track from "@/views/Track/Track";
 
 import "./Sequencer.scss";

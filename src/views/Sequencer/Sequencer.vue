@@ -73,7 +73,7 @@ export default {
                 return this.$store.getters.bpm;
             },
             set(value) {
-                this.$store.commit("SET_BPM", value);
+                this.$store.dispatch("setBpm", value);
             },
         },
         trackStyle() {
@@ -87,10 +87,10 @@ export default {
     watch: {},
     methods: {
         startSequence() {
-            this.$store.commit("START_SEQUENCER");
+            this.$store.dispatch("startSequencer");
         },
         stopSequence() {
-            this.$store.commit("STOP_SEQUENCER");
+            this.$store.dispatch("stopSequencer");
         },
         setActiveTrack(trackIndex) {
             this.activeTrack = trackIndex;

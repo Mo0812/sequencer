@@ -126,7 +126,13 @@
                         v-for="i in 16"
                         class="trigger"
                         :class="
-                            isActive(i) ? 'active' : isDetail(i) ? 'detail' : ''
+                            sequencerPosition == i
+                                ? 'detail'
+                                : isActive(i)
+                                ? 'active'
+                                : isDetail(i)
+                                ? 'detail'
+                                : ''
                         "
                         :key="i"
                     >
@@ -251,14 +257,15 @@ export default {
     computed: {
         ...mapGetters({
             playState: "sequencerState",
+            sequencerPosition: "sequencerPosition",
         }),
         parsedSequenceTrigger() {
             const sequence = [];
-            for (var i = 0; i < 16; i++) {
+            for (var i = 1; i <= 16; i++) {
                 const currentTrigger = this.getActive(i);
                 if (currentTrigger && currentTrigger.enabled) {
                     sequence.push({
-                        time: "0:0:" + i,
+                        time: "0:0:" + (i - 1),
                         note: currentTrigger.note,
                         duration: currentTrigger.duration,
                     });

@@ -10,7 +10,7 @@ Each track includes 16 steps which can be controlled specifically one by one.
 
 ## Demo
 
-You can play the squencer at the ~~[demo page]()~~.
+You can play the squencer at the [demo page](https://sequencer.moritzkanzler.com).
 
 ## Project setup
 

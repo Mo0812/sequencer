@@ -8,9 +8,27 @@
                 <section class="track-controls">
                     <h4>Track controls</h4>
                     <el-tabs
-                        tab-position="left"
+                        tab-position="top"
                         v-model="trackControlsActiveTab"
                     >
+                        <el-tab-pane name="sound">
+                            <span slot="label">
+                                <font-awesome-icon icon="volume-up" /> Sound
+                            </span>
+                            <el-select v-model="synthModel">
+                                <el-option key="synth" value="synth"
+                                    >Synth</el-option
+                                >
+                                <el-option key="monoSynth" value="monoSynth"
+                                    >Mono Synth</el-option
+                                >
+                            </el-select>
+                            <el-slider
+                                v-model="volume"
+                                :min="0"
+                                :max="100"
+                            ></el-slider>
+                        </el-tab-pane>
                         <el-tab-pane name="effects">
                             <span slot="label">
                                 <font-awesome-icon icon="weight" />
@@ -98,24 +116,6 @@
                                     </div>
                                 </div>
                             </article>
-                        </el-tab-pane>
-                        <el-tab-pane name="sound">
-                            <span slot="label">
-                                <font-awesome-icon icon="volume-up" /> Sound
-                            </span>
-                            <el-select v-model="synthModel">
-                                <el-option key="synth" value="synth"
-                                    >Synth</el-option
-                                >
-                                <el-option key="monoSynth" value="monoSynth"
-                                    >Mono Synth</el-option
-                                >
-                            </el-select>
-                            <el-slider
-                                v-model="volume"
-                                :min="0"
-                                :max="100"
-                            ></el-slider>
                         </el-tab-pane>
                     </el-tabs>
                 </section>
@@ -216,7 +216,7 @@ export default {
                 delay: {
                     instance: null,
                     properties: {
-                        delayTime: 12.5,
+                        delayTime: 12,
                         feedback: 50,
                     },
                     enabled: false,
@@ -224,7 +224,7 @@ export default {
                 reverb: {
                     instance: null,
                     properties: {
-                        decay: 0,
+                        decay: 1,
                     },
                     enabled: false,
                 },
@@ -403,8 +403,6 @@ export default {
         },
         synthModel: {
             handler(val, oldVal) {
-                // TODO: Add effects to new synth if applied before
-                console.log(val);
                 if (val !== oldVal) {
                     if (val == "synth") {
                         this.synth = new Tone.Synth().toDestination();
@@ -417,6 +415,16 @@ export default {
                                 attack: 0.1,
                             },
                         }).toDestination();
+                    }
+
+                    if (this.effects.distortion.enabled) {
+                        this.synth.connect(this.effects.distortion.instance);
+                    }
+                    if (this.effects.delay.enabled) {
+                        this.synth.connect(this.effects.delay.instance);
+                    }
+                    if (this.effects.reverb.enabled) {
+                        this.synth.connect(this.effects.reverb.instance);
                     }
                 }
             },

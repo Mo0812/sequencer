@@ -1,7 +1,6 @@
 <template>
     <div class="sequencer">
-        <section class="sequence-controls">
-            <h3>Sequence controls</h3>
+        <section class="sequencer-controls">
             <div class="play-controls">
                 <el-input-number class="bpm" v-model="bpm" />
                 <el-button class="tap" :disabled="true">
@@ -23,14 +22,27 @@
                 </el-button>
             </div>
         </section>
-        <el-tabs v-model="activeTab">
-            <el-tab-pane label="Track 1" name="track1">
-                <Track trackIndex="1" />
-            </el-tab-pane>
-            <el-tab-pane label="Track 2" name="track2">
-                <Track trackIndex="2" />
-            </el-tab-pane>
-        </el-tabs>
+        <section class="sequencer-track-controls" :style="trackStyle">
+            <div
+                class="track"
+                :class="trackIndex == activeTrack ? 'active' : ''"
+                v-for="trackIndex in tracks"
+                :key="trackIndex"
+                @click="setActiveTrack(trackIndex)"
+            >
+                T{{ trackIndex }}
+            </div>
+        </section>
+        <section class="sequencer-tracks">
+            <div
+                class="sequencer-track"
+                :class="trackIndex == activeTrack ? 'active' : ''"
+                v-for="trackIndex in tracks"
+                :key="trackIndex"
+            >
+                <Track :trackIndex="trackIndex" />
+            </div>
+        </section>
     </div>
 </template>
 
@@ -46,7 +58,8 @@ export default {
     name: "Sequencer",
     data() {
         return {
-            activeTab: "track1",
+            activeTrack: 1,
+            tracks: 4,
         };
     },
     components: {
@@ -65,6 +78,13 @@ export default {
                 this.$store.commit("SET_BPM", value);
             },
         },
+        trackStyle() {
+            const rows = this.tracks / 4;
+            return {
+                height: `${125 * rows}px`,
+                gridTemplate: `repeat(${rows}, 1fr) / repeat(4, 1fr)`,
+            };
+        },
     },
     watch: {},
     methods: {
@@ -73,6 +93,9 @@ export default {
         },
         stopSequence() {
             this.$store.commit("STOP_SEQUENCER");
+        },
+        setActiveTrack(trackIndex) {
+            this.activeTrack = trackIndex;
         },
     },
 };

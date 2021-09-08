@@ -6,6 +6,8 @@
     .header {
         grid-row: 1 / 2;
         grid-column: 1 / 1;
+
+        text-align: center;
     }
 
     .main {
@@ -85,7 +87,9 @@
         .pattern {
             width: 500px;
             height: 500px;
+
             margin: 0 auto;
+
             display: grid;
             grid-template: repeat(4, 1fr) / repeat(4, 1fr);
             column-gap: 10px;

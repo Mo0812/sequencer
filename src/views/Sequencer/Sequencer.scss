@@ -1,8 +1,22 @@
 .sequencer {
-    .sequence-controls {
+    display: grid;
+    grid-template: auto 1fr / 1fr 2fr 1fr;
+
+    gap: 20px;
+
+    .sequencer-controls {
+        grid-row: 1 / 2;
+        grid-column: 1 / 2;
+
+        align-self: center;
+
+        justify-content: center;
+
         .play-controls {
             display: grid;
             grid-template: 1fr 1fr / repeat(3, 1fr);
+
+            gap: 10px;
 
             .bpm {
                 grid-row: 1 / 1;
@@ -32,6 +46,59 @@
 
             .stop {
                 grid-column: 2 / 3;
+            }
+        }
+    }
+
+    .sequencer-track-controls {
+        grid-row: 1 / 2;
+        grid-column: 2 / 3;
+
+        width: 500px;
+        height: 250px;
+
+        display: grid;
+        grid-template: repeat(2, 1fr) / repeat(4, 1fr);
+        gap: 10px;
+
+        margin: 0 auto;
+
+        .track {
+            cursor: pointer;
+
+            background-color: #f0f0f0;
+            padding: 10px;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            position: relative;
+
+            &:hover {
+                background-color: #e5e5e5;
+
+                & > .settings {
+                    display: block;
+                }
+            }
+
+            &:active,
+            &.active {
+                background-color: rgb(120, 201, 177);
+            }
+        }
+    }
+
+    .sequencer-tracks {
+        grid-row: 2 / 3;
+        grid-column: 1 / 4;
+
+        .sequencer-track {
+            display: none;
+
+            &.active {
+                display: block;
             }
         }
     }

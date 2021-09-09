@@ -187,7 +187,7 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "Track",
-    props: ["trackIndex"],
+    props: ["trackIndex", "muted"],
     data() {
         return {
             sequenceTrigger: [],
@@ -310,6 +310,9 @@ export default {
                         this.selectedDetailTriggerNoteValue + "" + newValue;
                 }
             },
+        },
+        volumeInDb() {
+            return this.calcVolumeInDb(this.volume);
         },
     },
     watch: {
@@ -437,7 +440,16 @@ export default {
         },
         volume: {
             handler(val) {
-                this.synth.volume.val = val;
+                this.synth.volume.value = this.calcVolumeInDb(val);
+            },
+        },
+        muted: {
+            handler(val) {
+                if (val) {
+                    this.synth.volume.value = -100;
+                } else {
+                    this.synth.volume.value = this.volumeInDb;
+                }
             },
         },
     },
@@ -508,6 +520,9 @@ export default {
         },
         isDetail(i) {
             return this.showTriggerIndex == i;
+        },
+        calcVolumeInDb(volume) {
+            return volume - 100;
         },
     },
 };

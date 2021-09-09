@@ -25,12 +25,21 @@
         <section class="sequencer-track-controls" :style="trackStyle">
             <div
                 class="track"
-                :class="trackIndex == activeTrack ? 'active' : ''"
+                :class="trackClass(trackIndex)"
                 v-for="trackIndex in tracks"
                 :key="trackIndex"
-                @click="setActiveTrack(trackIndex)"
             >
-                T{{ trackIndex }}
+                <a class="track-point" @click="setActiveTrack(trackIndex)"
+                    >T{{ trackIndex }}</a
+                >
+                <a class="settings" @click="toggleMute(trackIndex)">
+                    <template v-if="isMuted(trackIndex)">
+                        <font-awesome-icon icon="volume-up" />
+                    </template>
+                    <template v-else>
+                        <font-awesome-icon icon="volume-mute" />
+                    </template>
+                </a>
             </div>
         </section>
         <section class="sequencer-tracks">
@@ -40,7 +49,7 @@
                 v-for="trackIndex in tracks"
                 :key="trackIndex"
             >
-                <Track :trackIndex="trackIndex" />
+                <Track :trackIndex="trackIndex" :muted="isMuted(trackIndex)" />
             </div>
         </section>
     </div>
@@ -58,6 +67,7 @@ export default {
         return {
             activeTrack: 1,
             tracks: 4,
+            trackMute: [],
         };
     },
     components: {
@@ -94,6 +104,28 @@ export default {
         },
         setActiveTrack(trackIndex) {
             this.activeTrack = trackIndex;
+        },
+        toggleMute(trackIndex) {
+            if (this.trackMute.includes(trackIndex)) {
+                this.trackMute = this.trackMute.filter(
+                    (id) => id != trackIndex
+                );
+            } else {
+                this.trackMute.push(trackIndex);
+            }
+        },
+        isMuted(trackIndex) {
+            return this.trackMute.includes(trackIndex);
+        },
+        trackClass(trackIndex) {
+            var classStr = "";
+            if (trackIndex == this.activeTrack) {
+                classStr += "active";
+            }
+            if (this.isMuted(trackIndex)) {
+                classStr += " muted";
+            }
+            return classStr;
         },
     },
 };

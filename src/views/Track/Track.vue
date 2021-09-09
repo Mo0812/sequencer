@@ -7,6 +7,22 @@
             <aside class="leftbar">
                 <section class="track-controls">
                     <h4>Track controls</h4>
+                    <el-button
+                        class="track-control-selector sound-selector"
+                        :class="
+                            trackControlsActiveTab == 'sound' ? 'active' : ''
+                        "
+                        @click="setTrackControlSelection('effects')"
+                        ><font-awesome-icon icon="volume-up"
+                    /></el-button>
+                    <el-button
+                        class="track-control-selector effects-selector"
+                        :class="
+                            trackControlsActiveTab == 'effects' ? 'active' : ''
+                        "
+                        @click="setTrackControlSelection('effects')"
+                        ><font-awesome-icon icon="weight"
+                    /></el-button>
                     <el-tabs
                         tab-position="top"
                         v-model="trackControlsActiveTab"
@@ -523,6 +539,9 @@ export default {
         },
         calcVolumeInDb(volume) {
             return volume - 100;
+        },
+        setTrackControlSelection(key) {
+            this.trackControlsActiveTab = key;
         },
     },
 };

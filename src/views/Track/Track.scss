@@ -31,6 +31,12 @@
         }
 
         .track-controls {
+            .track-control-selector {
+                &.active {
+                    background-color: $themeColorDefault;
+                }
+            }
+
             .effect {
                 header {
                     font-weight: bold;

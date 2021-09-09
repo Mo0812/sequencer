@@ -7,30 +7,37 @@
             <aside class="leftbar">
                 <section class="track-controls">
                     <h4>Track controls</h4>
-                    <el-button
-                        class="track-control-selector sound-selector"
-                        :class="
-                            trackControlsActiveTab == 'sound' ? 'active' : ''
-                        "
-                        @click="setTrackControlSelection('effects')"
-                        ><font-awesome-icon icon="volume-up"
-                    /></el-button>
-                    <el-button
-                        class="track-control-selector effects-selector"
-                        :class="
-                            trackControlsActiveTab == 'effects' ? 'active' : ''
-                        "
-                        @click="setTrackControlSelection('effects')"
-                        ><font-awesome-icon icon="weight"
-                    /></el-button>
-                    <el-tabs
-                        tab-position="top"
-                        v-model="trackControlsActiveTab"
-                    >
-                        <el-tab-pane name="sound">
-                            <span slot="label">
-                                <font-awesome-icon icon="volume-up" /> Sound
-                            </span>
+                    <div class="track-control-selector-container">
+                        <el-button
+                            class="track-control-selector sound"
+                            :class="
+                                trackControlsActiveTab == 'sound'
+                                    ? 'active'
+                                    : ''
+                            "
+                            @click="setTrackControlSelection('sound')"
+                            ><font-awesome-icon icon="volume-up"
+                        /></el-button>
+                        <el-button
+                            class="track-control-selector effects"
+                            :class="
+                                trackControlsActiveTab == 'effects'
+                                    ? 'active'
+                                    : ''
+                            "
+                            @click="setTrackControlSelection('effects')"
+                            ><font-awesome-icon icon="weight"
+                        /></el-button>
+                    </div>
+                    <div class="track-control-element-container">
+                        <div
+                            class="track-control-element sound"
+                            :class="
+                                trackControlsActiveTab == 'sound'
+                                    ? 'active'
+                                    : ''
+                            "
+                        >
                             <el-select v-model="synthModel">
                                 <el-option key="synth" value="synth"
                                     >Synth</el-option
@@ -44,12 +51,15 @@
                                 :min="0"
                                 :max="100"
                             ></el-slider>
-                        </el-tab-pane>
-                        <el-tab-pane name="effects">
-                            <span slot="label">
-                                <font-awesome-icon icon="weight" />
-                                Effects
-                            </span>
+                        </div>
+                        <div
+                            class="track-control-element effects"
+                            :class="
+                                trackControlsActiveTab == 'effects'
+                                    ? 'active'
+                                    : ''
+                            "
+                        >
                             <article class="effect distortion">
                                 <header>
                                     Distortion
@@ -132,8 +142,8 @@
                                     </div>
                                 </div>
                             </article>
-                        </el-tab-pane>
-                    </el-tabs>
+                        </div>
+                    </div>
                 </section>
                 <section class="trigger-controls">
                     <template v-if="selectedDetailTrigger">

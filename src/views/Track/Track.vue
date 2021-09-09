@@ -119,40 +119,13 @@
                         </el-tab-pane>
                     </el-tabs>
                 </section>
-            </aside>
-            <main class="main-part">
-                <section class="pattern">
-                    <div
-                        v-for="i in 16"
-                        class="trigger"
-                        :class="
-                            sequencerPosition == i
-                                ? 'detail'
-                                : isActive(i)
-                                ? 'active'
-                                : isDetail(i)
-                                ? 'detail'
-                                : ''
-                        "
-                        :key="i"
-                    >
-                        <a class="trigger-point" @click="toggleTrigger(i)">{{
-                            i
-                        }}</a>
-                        <a class="settings" @click="setTriggerSettings(i)"
-                            ><font-awesome-icon icon="cog"
-                        /></a>
-                    </div>
-                </section>
-            </main>
-            <aside class="rightbar">
-                <section class="trigger-settings">
+                <section class="trigger-controls">
                     <template v-if="selectedDetailTrigger">
                         <article class="trigger-note">
-                            <h3>
-                                Trigger settings:
+                            <h4>
+                                Trigger controls:
                                 <u>Trigger {{ selectedDetailTrigger.index }}</u>
-                            </h3>
+                            </h4>
                             <div class="note">
                                 <el-select
                                     class="note-value"
@@ -176,6 +149,32 @@
                     </template>
                 </section>
             </aside>
+            <main class="main-part">
+                <section class="pattern">
+                    <div
+                        v-for="i in 16"
+                        class="trigger"
+                        :class="
+                            sequencerPosition == i
+                                ? 'current-step'
+                                : isActive(i)
+                                ? 'active'
+                                : isDetail(i)
+                                ? 'detail'
+                                : ''
+                        "
+                        :key="i"
+                    >
+                        <a class="trigger-point" @click="toggleTrigger(i)">{{
+                            i
+                        }}</a>
+                        <a class="settings" @click="setTriggerSettings(i)"
+                            ><font-awesome-icon icon="cog"
+                        /></a>
+                    </div>
+                </section>
+            </main>
+            <aside class="rightbar"></aside>
         </div>
     </div>
 </template>

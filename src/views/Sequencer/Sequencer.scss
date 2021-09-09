@@ -75,6 +75,8 @@
 
             position: relative;
 
+            transition: background-color ease-in 0.1s;
+
             &:hover {
                 background-color: #e5e5e5;
 
@@ -86,6 +88,12 @@
             &:active,
             &.active {
                 background-color: rgb(120, 201, 177);
+            }
+
+            &:hover,
+            &:active,
+            &.active {
+                transition: background-color ease-out 0.1s;
             }
         }
     }

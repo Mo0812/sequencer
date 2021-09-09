@@ -57,7 +57,7 @@
             }
         }
 
-        .trigger-settings {
+        .trigger-controls {
             h5 {
                 margin: 0;
                 margin-bottom: 1rem;
@@ -107,6 +107,8 @@
 
                 position: relative;
 
+                transition: background-color ease-in 0.1s;
+
                 &:hover {
                     background-color: #e5e5e5;
 
@@ -122,6 +124,17 @@
 
                 &.detail {
                     background-color: rgb(120, 201, 177);
+                }
+
+                &.current-step {
+                    background-color: rgba(120, 201, 177, 0.5);
+                }
+
+                &:active,
+                &.active,
+                &.detail,
+                &.current-step {
+                    transition: background-color ease-out 0.1s;
                 }
 
                 & > .trigger-point {

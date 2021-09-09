@@ -1,0 +1,79 @@
+body {
+    margin: 20px;
+
+    font-family: "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB",
+        "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+}
+
+button,
+.el-button {
+    border-radius: 0;
+    outline: 0;
+    border: 0;
+    background-color: $backgroundDefault;
+
+    padding: 10px 20px;
+
+    cursor: pointer;
+
+    & + .el-button {
+        margin-left: 0;
+    }
+
+    &:hover {
+        color: $textColor;
+        background-color: $backgroundHighlight;
+    }
+
+    &.is-disabled {
+        background-color: $backgroundDefault;
+        color: $textMuted;
+
+        &:hover {
+            cursor: not-allowed;
+            background-color: $backgroundHighlight;
+        }
+    }
+}
+
+.el-input,
+.el-select {
+    .el-input__inner {
+        border-radius: 0;
+
+        &:focus {
+            border-color: $elUiBorderColor !important;
+        }
+    }
+}
+
+.el-select-dropdown {
+    border-radius: 0;
+}
+
+.el-input-number {
+    .el-input-number__decrease,
+    .el-input-number__increase {
+        border-radius: 0;
+        border-left: 0;
+        border-right: 0;
+
+        color: $textColor;
+        background-color: $backgroundDefault;
+    }
+
+    .el-input-number__decrease:hover,
+    .el-input-number__increase:hover {
+        color: $textColor;
+        background-color: $backgroundHighlight;
+    }
+
+    .el-input {
+        line-height: 40px;
+    }
+
+    .el-input__inner {
+        border-radius: 0;
+        border: 0;
+    }
+}

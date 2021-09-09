@@ -54,6 +54,7 @@ export default new Vuex.Store({
         },
         setBpm: (context, payload) => {
             Tone.Transport.bpm.value = payload;
+            context.commit("SET_BPM", payload);
             context.commit("RESET_SEQUENCER_POSITION_INTERVAL");
             context.commit("SET_SEQUENCER_POSITION_INTERVAL");
         },

@@ -98,7 +98,7 @@
             .trigger {
                 cursor: pointer;
 
-                background-color: #f0f0f0;
+                background-color: $backgroundDefault;
                 padding: 10px;
 
                 display: flex;
@@ -110,7 +110,7 @@
                 transition: background-color ease-in 0.1s;
 
                 &:hover {
-                    background-color: #e5e5e5;
+                    background-color: $backgroundHighlight;
 
                     & > .settings {
                         display: block;
@@ -119,15 +119,15 @@
 
                 &:active,
                 &.active {
-                    background-color: #d5d5d5;
+                    background-color: $backgroundSelected;
                 }
 
                 &.detail {
-                    background-color: rgb(120, 201, 177);
+                    background-color: $themeColorDefault;
                 }
 
                 &.current-step {
-                    background-color: rgba(120, 201, 177, 0.5);
+                    background-color: $themeColorHighlighted;
                 }
 
                 &:active,

@@ -139,7 +139,7 @@
                                         {{ note }}
                                     </el-option>
                                 </el-select>
-                                <el-input-number
+                                <el-input
                                     class="note-height"
                                     v-model="selectedDetailTriggerNoteHeight"
                                     controls-position="right"

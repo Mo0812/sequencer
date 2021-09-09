@@ -31,6 +31,29 @@
         }
 
         .track-controls {
+            .track-control-selector-container {
+                border-bottom: 1px solid $elUiBorderColor;
+
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+
+                .track-control-selector {
+                    &.active {
+                        background-color: $themeColorDefault;
+                    }
+                }
+            }
+
+            .track-control-element-container {
+                .track-control-element {
+                    display: none;
+
+                    &.active {
+                        display: block;
+                    }
+                }
+            }
+
             .effect {
                 header {
                     font-weight: bold;

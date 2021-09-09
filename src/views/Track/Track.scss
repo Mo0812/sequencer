@@ -8,6 +8,9 @@
         grid-column: 1 / 1;
 
         text-align: center;
+
+        margin: 0;
+        margin-bottom: 20px;
     }
 
     .main {
@@ -32,15 +35,17 @@
 
         .track-controls {
             .track-control-selector-container {
-                border-bottom: 1px solid $elUiBorderColor;
+                display: flex;
+
+                gap: 10px;
+
+                border-bottom: 2px solid $elUiBorderColor;
 
                 padding-bottom: 20px;
                 margin-bottom: 20px;
 
                 .track-control-selector {
-                    &.active {
-                        background-color: $themeColorDefault;
-                    }
+                    height: 40px;
                 }
             }
 

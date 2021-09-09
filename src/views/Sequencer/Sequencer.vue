@@ -3,23 +3,23 @@
         <section class="sequencer-controls">
             <div class="play-controls">
                 <el-input-number class="bpm" v-model="bpm" />
-                <el-button class="tap" :disabled="true">
+                <button class="tap is-disabled">
                     <font-awesome-icon icon="clock" />
-                </el-button>
-                <el-button
-                    class="play"
+                </button>
+                <button
+                    class="play no-highlight"
                     :class="sequencerState == 'start' ? 'active' : ''"
                     @click="startSequence"
                 >
                     <font-awesome-icon icon="play" />
-                </el-button>
-                <el-button
-                    class="stop"
+                </button>
+                <button
+                    class="stop no-highlight"
                     :class="sequencerState == 'stop' ? 'active' : ''"
                     @click="stopSequence"
                 >
                     <font-awesome-icon icon="stop" />
-                </el-button>
+                </button>
             </div>
         </section>
         <section class="sequencer-track-controls" :style="trackStyle">
@@ -41,6 +41,12 @@
                     </template>
                 </a>
             </div>
+        </section>
+        <section class="sequencer-menu">
+            <ul>
+                <li><a href="#">Settings</a></li>
+                <li><a href="https://github.com/Mo0812/sequencer">About</a></li>
+            </ul>
         </section>
         <section class="sequencer-tracks">
             <div

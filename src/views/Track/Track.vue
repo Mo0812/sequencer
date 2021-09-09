@@ -8,7 +8,7 @@
                 <section class="track-controls">
                     <h4>Track controls</h4>
                     <div class="track-control-selector-container">
-                        <el-button
+                        <button
                             class="track-control-selector sound"
                             :class="
                                 trackControlsActiveTab == 'sound'
@@ -16,9 +16,10 @@
                                     : ''
                             "
                             @click="setTrackControlSelection('sound')"
-                            ><font-awesome-icon icon="volume-up"
-                        /></el-button>
-                        <el-button
+                        >
+                            <font-awesome-icon icon="volume-up" />
+                        </button>
+                        <button
                             class="track-control-selector effects"
                             :class="
                                 trackControlsActiveTab == 'effects'
@@ -26,8 +27,9 @@
                                     : ''
                             "
                             @click="setTrackControlSelection('effects')"
-                            ><font-awesome-icon icon="weight"
-                        /></el-button>
+                        >
+                            <font-awesome-icon icon="weight" />
+                        </button>
                     </div>
                     <div class="track-control-element-container">
                         <div

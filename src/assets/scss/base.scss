@@ -5,26 +5,41 @@ body {
         "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
 }
 
-button,
-.el-button {
+button {
     border-radius: 0;
     outline: 0;
     border: 0;
+
+    color: $buttonColor;
     background-color: $backgroundDefault;
 
     padding: 10px 20px;
 
     cursor: pointer;
 
-    & + .el-button {
-        margin-left: 0;
-    }
-
     &:hover,
     &:active,
     &:focus {
-        color: $textColor;
+        color: $buttonHighlightColor;
         background-color: $backgroundHighlight;
+    }
+
+    &.active {
+        color: $buttonHighlightColor;
+        background-color: $themeColorDefault;
+
+        &:hover {
+            color: $buttonColor;
+            background-color: $themeColorHighlighted;
+        }
+    }
+
+    &.no-highlight {
+        background-color: $backgroundDefault !important;
+
+        &:hover {
+            background-color: $backgroundHighlight !important;
+        }
     }
 
     &.is-disabled {

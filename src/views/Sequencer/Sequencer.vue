@@ -44,8 +44,17 @@
         </section>
         <section class="sequencer-menu">
             <ul>
+                <li>
+                    <a
+                        href="https://github.com/Mo0812/sequencer"
+                        target="_blank"
+                        >GitHub</a
+                    >
+                </li>
                 <li><a href="#">Settings</a></li>
-                <li><a href="https://github.com/Mo0812/sequencer">About</a></li>
+                <li>
+                    <a href="#" @click="aboutVisible = true">About</a>
+                </li>
             </ul>
         </section>
         <section class="sequencer-tracks">
@@ -58,10 +67,26 @@
                 <Track :trackIndex="trackIndex" :muted="isMuted(trackIndex)" />
             </div>
         </section>
+        <el-dialog
+            title="About"
+            :visible.sync="aboutVisible"
+            @open="fetchReadme"
+        >
+            <div class="readme" v-html="renderMarkdown(readme)"></div>
+            <hr />
+            <div>
+                Visit project on GitHub:
+                <a href="https://github.com/Mo0812/sequencer"
+                    >https://github.com/Mo0812/sequencer</a
+                >
+            </div>
+        </el-dialog>
     </div>
 </template>
 
 <script>
+import marked from "marked";
+
 import Track from "@/views/Track/Track";
 
 import "./Sequencer.scss";
@@ -74,6 +99,8 @@ export default {
             activeTrack: 1,
             tracks: 4,
             trackMute: [],
+            aboutVisible: false,
+            readme: "",
         };
     },
     components: {
@@ -132,6 +159,17 @@ export default {
                 classStr += " muted";
             }
             return classStr;
+        },
+        renderMarkdown(text) {
+            return marked(text);
+        },
+        async fetchReadme() {
+            console.log("loading readme");
+            const response = await fetch(
+                "https://raw.githubusercontent.com/Mo0812/sequencer/main/README.md"
+            );
+            const markdown = await response.text();
+            this.readme = markdown;
         },
     },
 };

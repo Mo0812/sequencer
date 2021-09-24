@@ -1,0 +1,4 @@
+.control-container {
+    @include article-area;
+    @include controls;
+}

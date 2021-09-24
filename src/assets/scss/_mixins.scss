@@ -1,0 +1,29 @@
+@mixin controls {
+    .controls {
+        .control {
+            display: grid;
+            grid-template: 1fr / 1fr 2fr;
+
+            align-items: center;
+
+            .label {
+                grid-column: 1 / 2;
+                margin: 0;
+                padding: 0;
+            }
+
+            .value {
+                grid-column: 2 / 3;
+            }
+        }
+    }
+}
+
+@mixin article-area {
+    margin: 20px 0;
+
+    header {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+}

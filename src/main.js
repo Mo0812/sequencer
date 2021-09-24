@@ -5,6 +5,7 @@ import store from "./store";
 
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
+import { fab } from "@fortawesome/free-brands-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 import ElementUI from "element-ui";
@@ -12,7 +13,7 @@ import "element-ui/lib/theme-chalk/index.css";
 
 import "@/assets/scss/base.scss";
 
-library.add(fas);
+library.add(fas, fab);
 
 Vue.component("font-awesome-icon", FontAwesomeIcon);
 

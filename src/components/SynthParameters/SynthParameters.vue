@@ -4,7 +4,9 @@
         <article class="control-container">
             <div class="controls">
                 <div class="control">
-                    <el-slider :min="0" :max="100"></el-slider>
+                    <div class="value">
+                        <el-slider :min="0" :max="100"></el-slider>
+                    </div>
                 </div>
             </div>
         </article>

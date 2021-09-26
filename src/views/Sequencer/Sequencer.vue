@@ -59,6 +59,8 @@
 </template>
 
 <script>
+import { EventBus } from "@/utils/event-bus";
+
 import Track from "@/views/Track/Track";
 import Navbar from "@/components/Navbar/Navbar";
 
@@ -79,6 +81,17 @@ export default {
         Navbar,
     },
     created() {},
+    mounted() {
+        EventBus.$on("midi.system.start", (val) => {
+            console.log("midi.system.start", val);
+            this.startSequence();
+        });
+
+        EventBus.$on("midi.system.stop", (val) => {
+            console.log("midi.system.stop", val);
+            this.stopSequence();
+        });
+    },
     computed: {
         ...mapGetters({
             sequencerState: "sequencerState",

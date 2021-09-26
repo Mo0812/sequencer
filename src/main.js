@@ -3,6 +3,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
+import midi from "./utils/midi";
+
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { fab } from "@fortawesome/free-brands-svg-icons";
@@ -20,6 +22,10 @@ Vue.component("font-awesome-icon", FontAwesomeIcon);
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false;
+
+// MIDI Part
+midi.checkMidiAccess();
+midi.initMidiAccess();
 
 new Vue({
     router,

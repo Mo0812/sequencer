@@ -289,8 +289,8 @@ export default {
             this.selectedDetailTriggerNote = val.noteValue;
         });
     },
-    beforeUpdate() {
-        // EventBus.$off("midi.note.on");
+    beforeUnmount() {
+        EventBus.$off("midi.note.on");
     },
     computed: {
         ...mapGetters({

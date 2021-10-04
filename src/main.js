@@ -24,7 +24,6 @@ Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
 // MIDI Part
-midi.checkMidiAccess();
 midi.initMidiAccess();
 
 new Vue({

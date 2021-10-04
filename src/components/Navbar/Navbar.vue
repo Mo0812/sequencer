@@ -3,6 +3,15 @@
         <ul class="navbar-items">
             <li>
                 <el-tooltip
+                    effect="dark"
+                    :content="midiContent"
+                    placement="bottom"
+                >
+                    <span :class="midiClass" class="custom-label">MIDI</span>
+                </el-tooltip>
+            </li>
+            <li>
+                <el-tooltip
                     class="item"
                     effect="dark"
                     content="GitHub"
@@ -45,6 +54,10 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
+import { EventBus } from "@/utils/event-bus";
+
 import Readme from "@/components/Readme/Readme";
 
 import "./Navbar.scss";
@@ -57,7 +70,38 @@ export default {
     data() {
         return {
             aboutVisible: false,
+            midiInput: null,
+            midiClassAddition: "",
         };
+    },
+    computed: {
+        ...mapGetters(["midiAccess"]),
+        midiClass() {
+            var classStr = "midi ";
+            classStr += this.midiClassAddition + " ";
+            classStr += this.midiAccess ? "" : "disabled";
+            return classStr;
+        },
+        midiContent() {
+            return this.midiAccess ? "MIDI enabled" : "MIDI disabled";
+        },
+    },
+    mounted() {
+        EventBus.$on("midi.input", (val) => {
+            this.midiInput = val;
+        });
+    },
+    beforeUnmount() {
+        EventBus.$off("midi.input");
+    },
+    watch: {
+        midiInput: {
+            handler(val) {
+                setTimeout(() => {
+                    this.midiClassAddition = "highlight";
+                }, 100);
+            },
+        },
     },
 };
 </script>

@@ -94,3 +94,18 @@ button {
         border: 0;
     }
 }
+
+.custom-label {
+    background-color: $backgroundDefault;
+    padding: 5px 10px;
+    font-size: 0.75rem;
+
+    &.disabled {
+        color: $textMuted;
+    }
+
+    &.highlight {
+        background-color: $recordColor;
+        color: white;
+    }
+}

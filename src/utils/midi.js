@@ -1,4 +1,5 @@
 import { EventBus } from "@/utils/event-bus";
+import store from "../store";
 
 function transformMIDINoteValue(midiNoteNumber) {
     // See https://www.inspiredacoustics.com/en/MIDI_note_numbers_and_center_frequencies
@@ -31,17 +32,24 @@ function transformMIDINoteValue(midiNoteNumber) {
 }
 
 function checkMidiAccess() {
-    const midiAccess = navigator.requestMIDIAccess();
-    if (midiAccess) {
-        console.log("MIDI Support");
-        return true;
+    if (navigator.requestMIDIAccess) {
+        const midiAccess = navigator.requestMIDIAccess();
+        if (midiAccess) {
+            console.log("MIDI Support");
+            return true;
+        }
     }
     console.log("No MIDI Support");
     return false;
 }
 
 function initMidiAccess() {
-    navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+    if (checkMidiAccess()) {
+        navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+        store.commit("SET_MIDI_ACCESS", true);
+        return;
+    }
+    store.commit("SET_MIDI_ACCESS", false);
 }
 
 function onMIDISuccess(midiAccess) {
@@ -72,6 +80,8 @@ function getMIDIMessage(midiMessage) {
             velocity,
         };
         console.log(command, note, velocity);
+
+        EventBus.$emit("midi.input", data);
 
         // Note on command, depending on channel between 144-159 https://computermusicresource.com/MIDI.Commands.html
         if (command >= 144 && command <= 159) {

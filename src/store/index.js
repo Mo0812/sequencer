@@ -13,12 +13,18 @@ export default new Vuex.Store({
         midi: {
             access: false,
         },
+        packageVersion: process.env.PACKAGE_VERSION || "0",
+        settings: {
+            enableMIDI: true,
+        },
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
         sequencerPosition: (state) => state.sequencerPosition,
         bpm: (state) => state.bpm,
         midiAccess: (state) => state.midi.access,
+        version: (state) => state.packageVersion,
+        settings: (state) => state.settings,
     },
     mutations: {
         START_SEQUENCER: (state) => {
@@ -46,6 +52,9 @@ export default new Vuex.Store({
         },
         SET_MIDI_ACCESS: (state, payload) => {
             state.midi.access = payload;
+        },
+        SET_SETTINGS: (state, payload) => {
+            state.settings = payload;
         },
     },
     actions: {

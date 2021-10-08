@@ -1,10 +1,11 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import * as Tone from "tone";
+import VuexPersistence from "vuex-persist";
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
     state: {
         bpm: 90,
         sequencerState: "stop",
@@ -16,6 +17,7 @@ export default new Vuex.Store({
         packageVersion: process.env.PACKAGE_VERSION || "0",
         settings: {
             enableMIDI: true,
+            storePersistently: false,
         },
     },
     getters: {
@@ -76,4 +78,13 @@ export default new Vuex.Store({
         },
     },
     modules: {},
+    plugins: [
+        new VuexPersistence({
+            key: "sequencer",
+            storage: window.localStorage,
+            reducer: (state) => state.settings,
+        }).plugin,
+    ],
 });
+
+export default store;

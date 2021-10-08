@@ -35,9 +35,10 @@ yarn build
 -   [x] Parallel execution of multiple tracks
 -   [x] Tracks with individual effects
 -   [x] Trigger specific controls
+-   [x] MIDI Input support
 -   [ ] Track length up to 64 steps
 -   [ ] Sampling of custom sounds
--   [ ] Track controls like muting
+-   [x] Track controls like muting
 -   [ ] Effect controls over all tracks
 -   [ ] Storing and Loading created patterns
 -   [ ] Sample Library

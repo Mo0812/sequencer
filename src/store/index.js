@@ -10,11 +10,15 @@ export default new Vuex.Store({
         sequencerState: "stop",
         sequencerPosition: 0,
         sequencerPositionInterval: null,
+        midi: {
+            access: false,
+        },
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
         sequencerPosition: (state) => state.sequencerPosition,
         bpm: (state) => state.bpm,
+        midiAccess: (state) => state.midi.access,
     },
     mutations: {
         START_SEQUENCER: (state) => {
@@ -39,6 +43,9 @@ export default new Vuex.Store({
         },
         SET_BPM: (state, payload) => {
             state.bpm = payload;
+        },
+        SET_MIDI_ACCESS: (state, payload) => {
+            state.midi.access = payload;
         },
     },
     actions: {

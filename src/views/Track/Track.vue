@@ -210,6 +210,8 @@
 <script>
 import * as Tone from "tone";
 
+import { EventBus } from "@/utils/event-bus";
+
 import "./Track.scss";
 import { mapGetters } from "vuex";
 
@@ -281,6 +283,15 @@ export default {
             this.effects.reverb.properties.decay
         ).toDestination();
     },
+    mounted() {
+        EventBus.$on("midi.note.on", (val) => {
+            console.log("midi.note.on", val);
+            this.selectedDetailTriggerNote = val.noteValue;
+        });
+    },
+    beforeUnmount() {
+        EventBus.$off("midi.note.on");
+    },
     computed: {
         ...mapGetters({
             playState: "sequencerState",
@@ -336,6 +347,22 @@ export default {
                 if (trigger) {
                     trigger.note =
                         this.selectedDetailTriggerNoteValue + "" + newValue;
+                }
+            },
+        },
+        selectedDetailTriggerNote: {
+            get() {
+                const trigger = this.selectedDetailTrigger;
+                if (trigger) {
+                    const note = trigger.note;
+                    return note;
+                }
+                return null;
+            },
+            set(newValue) {
+                const trigger = this.selectedDetailTrigger;
+                if (trigger) {
+                    trigger.note = newValue;
                 }
             },
         },

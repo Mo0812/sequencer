@@ -40,19 +40,37 @@
                                     : ''
                             "
                         >
-                            <el-select v-model="synthModel">
-                                <el-option key="synth" value="synth"
-                                    >Synth</el-option
-                                >
-                                <el-option key="monoSynth" value="monoSynth"
-                                    >Mono Synth</el-option
-                                >
-                            </el-select>
-                            <el-slider
-                                v-model="volume"
-                                :min="0"
-                                :max="100"
-                            ></el-slider>
+                            <article class="synth-control">
+                                <header>Volume</header>
+                                <el-slider
+                                    v-model="volume"
+                                    :min="0"
+                                    :max="100"
+                                ></el-slider>
+                            </article>
+                            <article class="synth-control">
+                                <header>Synth model</header>
+                                <el-select v-model="synthModel">
+                                    <el-option
+                                        key="synth"
+                                        value="synth"
+                                        label="Synth"
+                                        >Synth</el-option
+                                    >
+                                    <el-option
+                                        key="monoSynth"
+                                        value="monoSynth"
+                                        label="Mono Synth"
+                                        >Mono Synth</el-option
+                                    >
+                                </el-select>
+                            </article>
+                            <article class="synth-control">
+                                <SynthParameters
+                                    :model="synthModel"
+                                    @synthOptionChange="initializeSynth"
+                                />
+                            </article>
                         </div>
                         <div
                             class="track-control-element effects"
@@ -211,6 +229,7 @@
 import * as Tone from "tone";
 
 import { EventBus } from "@/utils/event-bus";
+import SynthParameters from "@/components/SynthParameters/SynthParameters";
 
 import "./Track.scss";
 import { mapGetters } from "vuex";
@@ -218,6 +237,9 @@ import { mapGetters } from "vuex";
 export default {
     name: "Track",
     props: ["trackIndex", "muted"],
+    components: {
+        SynthParameters,
+    },
     data() {
         return {
             sequenceTrigger: [],
@@ -268,20 +290,8 @@ export default {
         };
     },
     created() {
-        this.synth = new Tone.Synth().toDestination();
-
-        this.effects.distortion.instance = new Tone.Distortion(
-            this.effects.distortion.properties.distortion / 100
-        ).toDestination();
-
-        this.effects.delay.instance = new Tone.FeedbackDelay(
-            this.effects.delay.properties.delayTime / 100,
-            this.effects.delay.properties.feedback / 100
-        ).toDestination();
-
-        this.effects.reverb.instance = new Tone.Reverb(
-            this.effects.reverb.properties.decay
-        ).toDestination();
+        this.initializeEffects();
+        this.initializeSynth();
     },
     mounted() {
         EventBus.$on("midi.note.on", (val) => {
@@ -468,28 +478,7 @@ export default {
         synthModel: {
             handler(val, oldVal) {
                 if (val !== oldVal) {
-                    if (val == "synth") {
-                        this.synth = new Tone.Synth().toDestination();
-                    } else if (val == "monoSynth") {
-                        this.synth = new Tone.MonoSynth({
-                            oscillator: {
-                                type: "square",
-                            },
-                            envelope: {
-                                attack: 0.1,
-                            },
-                        }).toDestination();
-                    }
-
-                    if (this.effects.distortion.enabled) {
-                        this.synth.connect(this.effects.distortion.instance);
-                    }
-                    if (this.effects.delay.enabled) {
-                        this.synth.connect(this.effects.delay.instance);
-                    }
-                    if (this.effects.reverb.enabled) {
-                        this.synth.connect(this.effects.reverb.instance);
-                    }
+                    this.initializeSynth();
                 }
             },
         },
@@ -581,6 +570,37 @@ export default {
         },
         setTrackControlSelection(key) {
             this.trackControlsActiveTab = key;
+        },
+        initializeEffects() {
+            this.effects.distortion.instance = new Tone.Distortion(
+                this.effects.distortion.properties.distortion / 100
+            ).toDestination();
+
+            this.effects.delay.instance = new Tone.FeedbackDelay(
+                this.effects.delay.properties.delayTime / 100,
+                this.effects.delay.properties.feedback / 100
+            ).toDestination();
+
+            this.effects.reverb.instance = new Tone.Reverb(
+                this.effects.reverb.properties.decay
+            ).toDestination();
+        },
+        initializeSynth(options = {}) {
+            if (this.synthModel == "monoSynth") {
+                this.synth = new Tone.MonoSynth(options).toDestination();
+            } else {
+                this.synth = new Tone.Synth().toDestination();
+            }
+
+            if (this.effects.distortion.enabled) {
+                this.synth.connect(this.effects.distortion.instance);
+            }
+            if (this.effects.delay.enabled) {
+                this.synth.connect(this.effects.delay.instance);
+            }
+            if (this.effects.reverb.enabled) {
+                this.synth.connect(this.effects.reverb.instance);
+            }
         },
     },
 };

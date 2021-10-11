@@ -4,6 +4,7 @@ $backgroundSelected: #d5d5d5;
 
 $themeColorDefault: rgb(120, 201, 177);
 $themeColorHighlighted: rgba(120, 201, 177, 0.5);
+$themeColorDarker: #46af8f;
 
 $textColor: black;
 $textMuted: #aaa;
@@ -14,3 +15,11 @@ $buttonHighlightColor: black;
 $recordColor: red;
 
 $elUiBorderColor: #dcdfe6;
+
+/* Customization of ElementUI variables */
+$--color-primary: $themeColorDarker;
+
+/* icon font path, required */
+// $--font-path: "~element-ui/lib/theme-chalk/fonts";
+
+// @import "~element-ui/packages/theme-chalk/src/index";

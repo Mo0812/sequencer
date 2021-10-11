@@ -53,6 +53,10 @@ button {
     }
 }
 
+.el-button.full + .el-button {
+    margin-left: 0;
+}
+
 .el-input,
 .el-select {
     .el-input__inner {
@@ -134,4 +138,9 @@ button {
             display: none;
         }
     }
+}
+
+.full,
+.el-button.full {
+    @include full-size;
 }

@@ -30,6 +30,17 @@
                         >
                             <font-awesome-icon icon="weight" />
                         </button>
+                        <button
+                            class="track-control-selector storage"
+                            :class="
+                                trackControlsActiveTab == 'storage'
+                                    ? 'active'
+                                    : ''
+                            "
+                            @click="setTrackControlSelection('storage')"
+                        >
+                            <font-awesome-icon icon="save" />
+                        </button>
                     </div>
                     <div class="track-control-element-container">
                         <div
@@ -162,6 +173,27 @@
                                     </div>
                                 </div>
                             </article>
+                        </div>
+                        <div
+                            class="track-control-element storage"
+                            :class="
+                                trackControlsActiveTab == 'storage'
+                                    ? 'active'
+                                    : ''
+                            "
+                        >
+                            <el-button type="primary" class="full">
+                                Store
+                            </el-button>
+                            <el-button type="primary" class="full">
+                                Restore
+                            </el-button>
+                            <el-button type="primary" class="full" disabled>
+                                Import
+                            </el-button>
+                            <el-button type="primary" class="full" disabled>
+                                Export
+                            </el-button>
                         </div>
                     </div>
                 </section>

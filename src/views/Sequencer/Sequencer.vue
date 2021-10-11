@@ -44,6 +44,15 @@
         </section>
         <section class="sequencer-menu">
             <Navbar />
+            <button class="storage store no-highlight" @click="storeSequence">
+                <font-awesome-icon icon="save" />
+            </button>
+            <button class="storage restore no-highlight">
+                <font-awesome-icon icon="undo" />
+            </button>
+            <button class="storage import no-highlight">
+                <font-awesome-icon icon="file-export" />
+            </button>
         </section>
         <section class="sequencer-tracks">
             <div
@@ -144,6 +153,9 @@ export default {
                 classStr += " muted";
             }
             return classStr;
+        },
+        storeSequence() {
+            console.log("store sequence");
         },
     },
 };

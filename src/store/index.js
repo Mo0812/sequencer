@@ -8,7 +8,7 @@ Vue.use(Vuex);
 const vuexPersist = new VuexPersistence({
     key: "sequencer",
     storage: localStorage,
-    reducer: (state) => ({ settings: state.settings }),
+    reducer: (state) => ({ settings: state.settings, songs: state.songs }),
 });
 
 const store = new Vuex.Store({
@@ -24,6 +24,7 @@ const store = new Vuex.Store({
         settings: {
             enableMIDI: true,
         },
+        songs: {},
     },
     getters: {
         sequencerState: (state) => state.sequencerState,

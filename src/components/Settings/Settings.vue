@@ -7,10 +7,9 @@
             <el-form-item label="Enable MIDI support">
                 <el-switch v-model="settings.enableMIDI"></el-switch>
             </el-form-item>
-            <el-form-item><strong>System</strong></el-form-item>
-            <el-form-item label="Store settings persistently">
-                <el-switch v-model="settings.storePersistently"></el-switch>
-            </el-form-item>
+            <!--<el-form-item><strong>System</strong></el-form-item>
+            <p><i>More to come...</i></p>
+            -->
         </el-form>
     </div>
 </template>

@@ -66,7 +66,11 @@
                 v-for="trackIndex in tracks"
                 :key="trackIndex"
             >
-                <Track :trackIndex="trackIndex" :muted="isMuted(trackIndex)" />
+                <Track
+                    :trackIndex="trackIndex"
+                    :muted="isMuted(trackIndex)"
+                    @exportTrack="exportTrack"
+                />
             </div>
         </section>
     </div>
@@ -161,6 +165,9 @@ export default {
         },
         storeSequence() {
             console.log("store sequence");
+        },
+        exportTrack(val) {
+            console.log(val);
         },
     },
 };

@@ -376,6 +376,25 @@ export default {
         volumeInDb() {
             return this.calcVolumeInDb(this.volume);
         },
+        trackExport() {
+            return {
+                effects: {
+                    distortion: {
+                        enabled: this.effects.distortion.enabled,
+                        properties: this.effects.distortion.properties,
+                    },
+                    delay: {
+                        enabled: this.effects.delay.enabled,
+                        properties: this.effects.delay.properties,
+                    },
+                    reverb: {
+                        enabled: this.effects.reverb.enabled,
+                        properties: this.effects.reverb.properties,
+                    },
+                },
+                sequenceTrigger: this.sequenceTrigger,
+            };
+        },
     },
     watch: {
         playState: {
@@ -492,6 +511,12 @@ export default {
                     this.synth.volume.value = this.volumeInDb;
                 }
             },
+        },
+        trackExport: {
+            handler(val) {
+                this.$emit("exportTrack", val);
+            },
+            deep: true,
         },
     },
     methods: {

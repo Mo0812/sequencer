@@ -1,26 +1,35 @@
 <template>
     <div class="sequencer">
-        <section class="sequencer-controls">
-            <div class="play-controls">
-                <el-input-number class="bpm" v-model="bpm" />
-                <button class="tap is-disabled">
-                    <font-awesome-icon icon="clock" />
-                </button>
-                <button
-                    class="play no-highlight"
-                    :class="sequencerState == 'start' ? 'active' : ''"
-                    @click="startSequence"
-                >
-                    <font-awesome-icon icon="play" />
-                </button>
-                <button
-                    class="stop no-highlight"
-                    :class="sequencerState == 'stop' ? 'active' : ''"
-                    @click="stopSequence"
-                >
-                    <font-awesome-icon icon="stop" />
-                </button>
-            </div>
+        <section class="sequencer-controls sequencer-play-controls">
+            <el-input-number class="bpm" v-model="bpm" />
+            <button class="tap is-disabled">
+                <font-awesome-icon icon="clock" />
+            </button>
+            <button
+                class="play no-highlight"
+                :class="sequencerState == 'start' ? 'active' : ''"
+                @click="startSequence"
+            >
+                <font-awesome-icon icon="play" />
+            </button>
+            <button
+                class="stop no-highlight"
+                :class="sequencerState == 'stop' ? 'active' : ''"
+                @click="stopSequence"
+            >
+                <font-awesome-icon icon="stop" />
+            </button>
+        </section>
+        <section class="sequencer-controls sequencer-storage-controls">
+            <button class="storage store no-highlight" @click="storeSequence">
+                <font-awesome-icon icon="save" />
+            </button>
+            <button class="storage restore no-highlight">
+                <font-awesome-icon icon="undo" />
+            </button>
+            <button class="storage import no-highlight">
+                <font-awesome-icon icon="file-export" />
+            </button>
         </section>
         <section class="sequencer-track-controls" :style="trackStyle">
             <div
@@ -44,15 +53,11 @@
         </section>
         <section class="sequencer-menu">
             <Navbar />
-            <button class="storage store no-highlight" @click="storeSequence">
-                <font-awesome-icon icon="save" />
-            </button>
-            <button class="storage restore no-highlight">
-                <font-awesome-icon icon="undo" />
-            </button>
-            <button class="storage import no-highlight">
-                <font-awesome-icon icon="file-export" />
-            </button>
+        </section>
+        <section class="sequencer-track-header">
+            <header class="header">
+                <h2>Track {{ activeTrack }}</h2>
+            </header>
         </section>
         <section class="sequencer-tracks">
             <div

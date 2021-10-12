@@ -1,8 +1,5 @@
 <template>
     <div class="track">
-        <header class="header">
-            <h2>Track {{ trackIndex }}</h2>
-        </header>
         <div class="main">
             <aside class="leftbar">
                 <section class="track-controls">
@@ -236,7 +233,7 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "Track",
-    props: ["trackIndex", "muted"],
+    props: ["muted"],
     components: {
         SynthParameters,
     },

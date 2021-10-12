@@ -69,7 +69,7 @@
                 <Track
                     :trackIndex="trackIndex"
                     :muted="isMuted(trackIndex)"
-                    @exportTrack="exportTrack"
+                    @exportTrack="exportTrack(trackIndex, $event)"
                 />
             </div>
         </section>
@@ -92,6 +92,7 @@ export default {
             activeTrack: 1,
             tracks: 4,
             trackMute: [],
+            sequenceExport: {},
         };
     },
     components: {
@@ -114,6 +115,14 @@ export default {
         ...mapGetters({
             sequencerState: "sequencerState",
         }),
+        sequence: {
+            get() {
+                return this.$store.getters.sequence;
+            },
+            set(value) {
+                this.$store.dispatch("storeSequence", value);
+            },
+        },
         bpm: {
             get() {
                 return this.$store.getters.bpm;
@@ -163,11 +172,12 @@ export default {
             }
             return classStr;
         },
+        exportTrack(trackIndex, val) {
+            this.sequenceExport[trackIndex] = val;
+        },
         storeSequence() {
             console.log("store sequence");
-        },
-        exportTrack(val) {
-            console.log(val);
+            this.sequence = { ...this.sequenceExport };
         },
     },
 };

@@ -24,7 +24,10 @@
             <button class="storage store no-highlight" @click="storeSequence">
                 <font-awesome-icon icon="save" />
             </button>
-            <button class="storage restore no-highlight">
+            <button
+                class="storage restore no-highlight"
+                @click="restoreSequence"
+            >
                 <font-awesome-icon icon="undo" />
             </button>
             <button class="storage import no-highlight">
@@ -69,6 +72,7 @@
                 <Track
                     :trackIndex="trackIndex"
                     :muted="isMuted(trackIndex)"
+                    :trackImport="trackImport(trackIndex)"
                     @exportTrack="exportTrack(trackIndex, $event)"
                 />
             </div>
@@ -93,6 +97,7 @@ export default {
             tracks: 4,
             trackMute: [],
             sequenceExport: {},
+            sequenceImport: {},
         };
     },
     components: {
@@ -172,12 +177,20 @@ export default {
             }
             return classStr;
         },
+        trackImport(trackIndex) {
+            const track = this.sequenceImport[trackIndex];
+            return track;
+        },
         exportTrack(trackIndex, val) {
             this.sequenceExport[trackIndex] = val;
         },
         storeSequence() {
             console.log("store sequence");
             this.sequence = { ...this.sequenceExport };
+        },
+        restoreSequence() {
+            console.log("restore sequence");
+            this.sequenceImport = { ...this.sequence };
         },
     },
 };

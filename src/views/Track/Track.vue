@@ -233,7 +233,7 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "Track",
-    props: ["muted"],
+    props: ["muted", "trackImport"],
     components: {
         SynthParameters,
     },
@@ -515,6 +515,13 @@ export default {
         trackExport: {
             handler(val) {
                 this.$emit("exportTrack", val);
+            },
+            deep: true,
+        },
+        trackImport: {
+            handler(val) {
+                console.log("trigger restore");
+                this.sequenceTrigger = [...val.sequenceTrigger];
             },
             deep: true,
         },

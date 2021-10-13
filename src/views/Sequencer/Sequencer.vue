@@ -30,7 +30,7 @@
             >
                 <font-awesome-icon icon="undo" />
             </button>
-            <button class="storage import no-highlight">
+            <button class="storage import no-highlight" @click="exportSequence">
                 <font-awesome-icon icon="file-export" />
             </button>
         </section>
@@ -194,6 +194,19 @@ export default {
             console.log("restore sequence");
             this.sequenceImport = { ...this.sequence };
             this.trackTrigger = !this.trackTrigger;
+        },
+        exportSequence() {
+            const blob = new Blob([JSON.stringify(this.sequence)], {
+                type: "application/json",
+            });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none;";
+            a.href = url;
+            a.download = "sequencer.json";
+            a.click();
+            window.URL.revokeObjectURL(url);
         },
     },
 };

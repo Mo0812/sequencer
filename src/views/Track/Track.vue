@@ -1,8 +1,5 @@
 <template>
     <div class="track">
-        <header class="header">
-            <h2>Track {{ trackIndex }}</h2>
-        </header>
         <div class="main">
             <aside class="leftbar">
                 <section class="track-controls">
@@ -29,17 +26,6 @@
                             @click="setTrackControlSelection('effects')"
                         >
                             <font-awesome-icon icon="weight" />
-                        </button>
-                        <button
-                            class="track-control-selector storage"
-                            :class="
-                                trackControlsActiveTab == 'storage'
-                                    ? 'active'
-                                    : ''
-                            "
-                            @click="setTrackControlSelection('storage')"
-                        >
-                            <font-awesome-icon icon="save" />
                         </button>
                     </div>
                     <div class="track-control-element-container">
@@ -174,27 +160,6 @@
                                 </div>
                             </article>
                         </div>
-                        <div
-                            class="track-control-element storage"
-                            :class="
-                                trackControlsActiveTab == 'storage'
-                                    ? 'active'
-                                    : ''
-                            "
-                        >
-                            <el-button type="primary" class="full">
-                                Store
-                            </el-button>
-                            <el-button type="primary" class="full">
-                                Restore
-                            </el-button>
-                            <el-button type="primary" class="full" disabled>
-                                Import
-                            </el-button>
-                            <el-button type="primary" class="full" disabled>
-                                Export
-                            </el-button>
-                        </div>
                     </div>
                 </section>
                 <section class="trigger-controls">
@@ -268,7 +233,7 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "Track",
-    props: ["trackIndex", "muted"],
+    props: ["muted", "trackImport", "trigger"],
     components: {
         SynthParameters,
     },
@@ -411,6 +376,25 @@ export default {
         volumeInDb() {
             return this.calcVolumeInDb(this.volume);
         },
+        trackExport() {
+            return {
+                effects: {
+                    distortion: {
+                        enabled: this.effects.distortion.enabled,
+                        properties: this.effects.distortion.properties,
+                    },
+                    delay: {
+                        enabled: this.effects.delay.enabled,
+                        properties: this.effects.delay.properties,
+                    },
+                    reverb: {
+                        enabled: this.effects.reverb.enabled,
+                        properties: this.effects.reverb.properties,
+                    },
+                },
+                sequenceTrigger: this.sequenceTrigger,
+            };
+        },
     },
     watch: {
         playState: {
@@ -525,6 +509,42 @@ export default {
                     this.synth.volume.value = -100;
                 } else {
                     this.synth.volume.value = this.volumeInDb;
+                }
+            },
+        },
+        trackExport: {
+            handler(val) {
+                this.$emit("exportTrack", val);
+            },
+            deep: true,
+        },
+        trigger: {
+            handler(val) {
+                if (this.trackImport && this.trackImport.sequenceTrigger) {
+                    console.log("trigger restore");
+                    this.sequenceTrigger = [
+                        ...this.trackImport.sequenceTrigger,
+                    ];
+                }
+                if (this.trackImport && this.trackImport.effects) {
+                    console.log("effect restore");
+                    this.effects.distortion.enabled =
+                        this.trackImport.effects.distortion.enabled;
+                    this.effects.distortion.properties = {
+                        ...this.trackImport.effects.distortion.properties,
+                    };
+
+                    this.effects.delay.enabled =
+                        this.trackImport.effects.delay.enabled;
+                    this.effects.delay.properties = {
+                        ...this.trackImport.effects.delay.properties,
+                    };
+
+                    this.effects.reverb.enabled =
+                        this.trackImport.effects.reverb.enabled;
+                    this.effects.reverb.properties = {
+                        ...this.trackImport.effects.reverb.properties,
+                    };
                 }
             },
         },

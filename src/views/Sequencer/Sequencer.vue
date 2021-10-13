@@ -1,26 +1,38 @@
 <template>
     <div class="sequencer">
-        <section class="sequencer-controls">
-            <div class="play-controls">
-                <el-input-number class="bpm" v-model="bpm" />
-                <button class="tap is-disabled">
-                    <font-awesome-icon icon="clock" />
-                </button>
-                <button
-                    class="play no-highlight"
-                    :class="sequencerState == 'start' ? 'active' : ''"
-                    @click="startSequence"
-                >
-                    <font-awesome-icon icon="play" />
-                </button>
-                <button
-                    class="stop no-highlight"
-                    :class="sequencerState == 'stop' ? 'active' : ''"
-                    @click="stopSequence"
-                >
-                    <font-awesome-icon icon="stop" />
-                </button>
-            </div>
+        <section class="sequencer-controls sequencer-play-controls">
+            <el-input-number class="bpm" v-model="bpm" />
+            <button class="tap is-disabled">
+                <font-awesome-icon icon="clock" />
+            </button>
+            <button
+                class="play no-highlight"
+                :class="sequencerState == 'start' ? 'active' : ''"
+                @click="startSequence"
+            >
+                <font-awesome-icon icon="play" />
+            </button>
+            <button
+                class="stop no-highlight"
+                :class="sequencerState == 'stop' ? 'active' : ''"
+                @click="stopSequence"
+            >
+                <font-awesome-icon icon="stop" />
+            </button>
+        </section>
+        <section class="sequencer-controls sequencer-storage-controls">
+            <button class="storage store no-highlight" @click="storeSequence">
+                <font-awesome-icon icon="save" />
+            </button>
+            <button
+                class="storage restore no-highlight"
+                @click="restoreSequence"
+            >
+                <font-awesome-icon icon="undo" />
+            </button>
+            <button class="storage import no-highlight" @click="exportSequence">
+                <font-awesome-icon icon="file-export" />
+            </button>
         </section>
         <section class="sequencer-track-controls" :style="trackStyle">
             <div
@@ -45,6 +57,11 @@
         <section class="sequencer-menu">
             <Navbar />
         </section>
+        <section class="sequencer-track-header">
+            <header class="header">
+                <h2>Track {{ activeTrack }}</h2>
+            </header>
+        </section>
         <section class="sequencer-tracks">
             <div
                 class="sequencer-track"
@@ -52,7 +69,13 @@
                 v-for="trackIndex in tracks"
                 :key="trackIndex"
             >
-                <Track :trackIndex="trackIndex" :muted="isMuted(trackIndex)" />
+                <Track
+                    :trackIndex="trackIndex"
+                    :muted="isMuted(trackIndex)"
+                    :trigger="trackTrigger"
+                    :trackImport="trackImport(trackIndex)"
+                    @exportTrack="exportTrack(trackIndex, $event)"
+                />
             </div>
         </section>
     </div>
@@ -74,6 +97,9 @@ export default {
             activeTrack: 1,
             tracks: 4,
             trackMute: [],
+            sequenceExport: {},
+            sequenceImport: {},
+            trackTrigger: false,
         };
     },
     components: {
@@ -96,6 +122,14 @@ export default {
         ...mapGetters({
             sequencerState: "sequencerState",
         }),
+        sequence: {
+            get() {
+                return this.$store.getters.sequence;
+            },
+            set(value) {
+                this.$store.dispatch("storeSequence", value);
+            },
+        },
         bpm: {
             get() {
                 return this.$store.getters.bpm;
@@ -144,6 +178,35 @@ export default {
                 classStr += " muted";
             }
             return classStr;
+        },
+        trackImport(trackIndex) {
+            const track = this.sequenceImport[trackIndex];
+            return track;
+        },
+        exportTrack(trackIndex, val) {
+            this.sequenceExport[trackIndex] = val;
+        },
+        storeSequence() {
+            console.log("store sequence");
+            this.sequence = { ...this.sequenceExport };
+        },
+        restoreSequence() {
+            console.log("restore sequence");
+            this.sequenceImport = { ...this.sequence };
+            this.trackTrigger = !this.trackTrigger;
+        },
+        exportSequence() {
+            const blob = new Blob([JSON.stringify(this.sequence)], {
+                type: "application/json",
+            });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            document.body.appendChild(a);
+            a.style = "display: none;";
+            a.href = url;
+            a.download = "sequencer.json";
+            a.click();
+            window.URL.revokeObjectURL(url);
         },
     },
 };

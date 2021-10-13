@@ -8,7 +8,7 @@ Vue.use(Vuex);
 const vuexPersist = new VuexPersistence({
     key: "sequencer",
     storage: localStorage,
-    reducer: (state) => ({ settings: state.settings }),
+    reducer: (state) => ({ settings: state.settings, song: state.song }),
 });
 
 const store = new Vuex.Store({
@@ -24,6 +24,7 @@ const store = new Vuex.Store({
         settings: {
             enableMIDI: true,
         },
+        song: {},
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
@@ -32,6 +33,7 @@ const store = new Vuex.Store({
         midiAccess: (state) => state.midi.access,
         version: (state) => state.packageVersion,
         settings: (state) => state.settings,
+        sequence: (state) => state.song,
     },
     mutations: {
         START_SEQUENCER: (state) => {
@@ -63,6 +65,9 @@ const store = new Vuex.Store({
         SET_SETTINGS: (state, payload) => {
             state.settings = payload;
         },
+        STORE_SONG: (state, payload) => {
+            state.song = payload;
+        },
     },
     actions: {
         startSequencer: (context, payload) => {
@@ -80,6 +85,9 @@ const store = new Vuex.Store({
             context.commit("SET_BPM", payload);
             context.commit("RESET_SEQUENCER_POSITION_INTERVAL");
             context.commit("SET_SEQUENCER_POSITION_INTERVAL");
+        },
+        storeSequence: (context, payload) => {
+            context.commit("STORE_SONG", payload);
         },
     },
     modules: {},

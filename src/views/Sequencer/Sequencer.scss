@@ -1,63 +1,99 @@
 .sequencer {
     display: grid;
-    grid-template: auto auto / 1fr 2fr 1fr;
+    grid-template: auto auto auto / 1fr 2fr 1fr;
 
     gap: 20px;
 
-    .sequencer-controls {
+    .sequencer-play-controls {
         grid-row: 1 / 2;
         grid-column: 1 / 2;
 
-        align-self: center;
+        display: grid;
+        grid-template: 1fr 1fr / repeat(3, 1fr);
 
-        justify-content: center;
+        gap: 0;
 
         height: 100%;
 
-        .play-controls {
-            display: grid;
-            grid-template: 1fr 1fr / repeat(3, 1fr);
+        .bpm {
+            grid-row: 1 / 1;
+            grid-column: 1 / 4;
+            width: 100%;
 
-            gap: 0;
+            border-bottom: 2px solid $backgroundSelected;
+        }
 
-            height: 100%;
+        .play,
+        .stop,
+        .tap {
+            grid-row: 2 / 2;
 
-            .bpm {
-                grid-row: 1 / 1;
-                grid-column: 1 / 4;
-                width: 100%;
+            justify-self: center;
+            align-self: end;
 
-                border-bottom: 2px solid $backgroundSelected;
+            height: 40px;
+
+            &.active {
+                color: $recordColor;
             }
+        }
 
-            .play,
-            .stop,
-            .tap {
-                grid-row: 2 / 2;
+        .tap {
+            grid-column: 3 / 4;
+            justify-self: end;
+        }
 
-                justify-self: center;
-                align-self: end;
+        .play {
+            grid-column: 1 / 2;
+            justify-self: start;
+        }
 
-                height: 40px;
+        .stop {
+            grid-column: 2 / 3;
+        }
+    }
 
-                &.active {
-                    color: $recordColor;
-                }
-            }
+    .sequencer-storage-controls {
+        grid-row: 2 / 3;
+        grid-column: 1 / 2;
 
-            .tap {
-                grid-column: 3 / 4;
-                justify-self: end;
-            }
+        display: grid;
+        grid-template: 1fr / repeat(3, 1fr);
 
-            .play {
-                grid-column: 1 / 2;
-                justify-self: start;
-            }
+        gap: 0;
 
-            .stop {
-                grid-column: 2 / 3;
-            }
+        .storage {
+            grid-row: 1 / 1;
+
+            justify-self: center;
+
+            height: 40px;
+        }
+
+        .import {
+            grid-column: 3 / 4;
+            justify-self: end;
+        }
+
+        .store {
+            grid-column: 1 / 2;
+            justify-self: start;
+        }
+
+        .restore {
+            grid-column: 2 / 3;
+        }
+    }
+
+    .sequencer-track-header {
+        grid-row: 2 / 3;
+        grid-column: 2 / 3;
+
+        align-self: center;
+        justify-self: center;
+
+        h2 {
+            margin: 0;
         }
     }
 
@@ -135,13 +171,21 @@
         grid-row: 1 / 2;
         grid-column: 3 / 4;
 
-        display: flex;
+        display: grid;
 
-        justify-content: end;
+        grid-template: 1fr / repeat(3, 1fr);
+
+        .navbar {
+            display: flex;
+            justify-content: end;
+
+            grid-row: 1 / 2;
+            grid-column: 1 / 4;
+        }
     }
 
     .sequencer-tracks {
-        grid-row: 2 / 3;
+        grid-row: 3 / 4;
         grid-column: 1 / 4;
 
         .sequencer-track {

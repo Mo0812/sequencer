@@ -72,6 +72,7 @@
                 <Track
                     :trackIndex="trackIndex"
                     :muted="isMuted(trackIndex)"
+                    :trigger="trackTrigger"
                     :trackImport="trackImport(trackIndex)"
                     @exportTrack="exportTrack(trackIndex, $event)"
                 />
@@ -98,6 +99,7 @@ export default {
             trackMute: [],
             sequenceExport: {},
             sequenceImport: {},
+            trackTrigger: false,
         };
     },
     components: {
@@ -191,6 +193,7 @@ export default {
         restoreSequence() {
             console.log("restore sequence");
             this.sequenceImport = { ...this.sequence };
+            this.trackTrigger = !this.trackTrigger;
         },
     },
 };

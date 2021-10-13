@@ -233,7 +233,7 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "Track",
-    props: ["muted", "trackImport"],
+    props: ["muted", "trackImport", "trigger"],
     components: {
         SynthParameters,
     },
@@ -518,12 +518,35 @@ export default {
             },
             deep: true,
         },
-        trackImport: {
+        trigger: {
             handler(val) {
-                console.log("trigger restore");
-                this.sequenceTrigger = [...val.sequenceTrigger];
+                if (this.trackImport && this.trackImport.sequenceTrigger) {
+                    console.log("trigger restore");
+                    this.sequenceTrigger = [
+                        ...this.trackImport.sequenceTrigger,
+                    ];
+                }
+                if (this.trackImport && this.trackImport.effects) {
+                    console.log("effect restore");
+                    this.effects.distortion.enabled =
+                        this.trackImport.effects.distortion.enabled;
+                    this.effects.distortion.properties = {
+                        ...this.trackImport.effects.distortion.properties,
+                    };
+
+                    this.effects.delay.enabled =
+                        this.trackImport.effects.delay.enabled;
+                    this.effects.delay.properties = {
+                        ...this.trackImport.effects.delay.properties,
+                    };
+
+                    this.effects.reverb.enabled =
+                        this.trackImport.effects.reverb.enabled;
+                    this.effects.reverb.properties = {
+                        ...this.trackImport.effects.reverb.properties,
+                    };
+                }
             },
-            deep: true,
         },
     },
     methods: {

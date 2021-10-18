@@ -8,7 +8,11 @@ Vue.use(Vuex);
 const vuexPersist = new VuexPersistence({
     key: "sequencer",
     storage: localStorage,
-    reducer: (state) => ({ settings: state.settings, song: state.song }),
+    reducer: (state) => ({
+        settings: state.settings,
+        currentSequence: state.currentSequence,
+        storedSequences: state.storedSequences,
+    }),
 });
 
 const store = new Vuex.Store({
@@ -24,7 +28,11 @@ const store = new Vuex.Store({
         settings: {
             enableMIDI: true,
         },
-        song: {},
+        currentSequence: {},
+        storedSequences: [
+            { date: "2021-10-01", name: "Sequence 1", id: 1 },
+            { date: "2021-10-10", name: "Sequence 2", id: 2 },
+        ],
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
@@ -33,7 +41,8 @@ const store = new Vuex.Store({
         midiAccess: (state) => state.midi.access,
         version: (state) => state.packageVersion,
         settings: (state) => state.settings,
-        sequence: (state) => state.song,
+        sequence: (state) => state.currentSequence,
+        storedSequences: (state) => state.storedSequences,
     },
     mutations: {
         START_SEQUENCER: (state) => {
@@ -65,8 +74,16 @@ const store = new Vuex.Store({
         SET_SETTINGS: (state, payload) => {
             state.settings = payload;
         },
-        STORE_SONG: (state, payload) => {
-            state.song = payload;
+        STORE_CURRENT_SEQUENCE: (state, payload) => {
+            state.currentSequence = payload;
+        },
+        ADD_STORED_SEQUENCE: (state, payload) => {
+            state.storedSequences.push(payload);
+        },
+        REMOVE_STORED_SEQUENCE: (state, payload) => {
+            state.storedSequences = state.storedSequences.filter(
+                (seq) => seq.id !== payload.id
+            );
         },
     },
     actions: {
@@ -87,7 +104,23 @@ const store = new Vuex.Store({
             context.commit("SET_SEQUENCER_POSITION_INTERVAL");
         },
         storeSequence: (context, payload) => {
-            context.commit("STORE_SONG", payload);
+            context.commit("STORE_CURRENT_SEQUENCE", payload);
+        },
+        storeSequenceInStoredSequences: (context, payload) => {
+            if (payload.selectedSequence) {
+                // TODO: Override
+                context.commit(
+                    "REMOVE_STORED_SEQUENCE",
+                    payload.selectedSequence
+                );
+            }
+            // TODO: Save initially
+            context.commit("ADD_STORED_SEQUENCE", {
+                date: Date.now(),
+                name: payload.name,
+                id: 3,
+                sequence: { ...context.getters.sequence },
+            });
         },
     },
     modules: {},

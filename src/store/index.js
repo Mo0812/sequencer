@@ -2,6 +2,14 @@ import Vue from "vue";
 import Vuex from "vuex";
 import * as Tone from "tone";
 import VuexPersistence from "vuex-persist";
+import shortid from "shortid";
+import {
+    uniqueNamesGenerator,
+    Config,
+    adjectives,
+    colors,
+    animals,
+} from "unique-names-generator";
 
 Vue.use(Vuex);
 
@@ -29,10 +37,7 @@ const store = new Vuex.Store({
             enableMIDI: true,
         },
         currentSequence: {},
-        storedSequences: [
-            { date: "2021-10-01", name: "Sequence 1", id: 1 },
-            { date: "2021-10-10", name: "Sequence 2", id: 2 },
-        ],
+        storedSequences: [],
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
@@ -43,6 +48,9 @@ const store = new Vuex.Store({
         settings: (state) => state.settings,
         sequence: (state) => state.currentSequence,
         storedSequences: (state) => state.storedSequences,
+        storedSequenceById: (state) => (id) => {
+            return state.storedSequences.find((seq) => seq.id == id);
+        },
     },
     mutations: {
         START_SEQUENCER: (state) => {
@@ -85,6 +93,12 @@ const store = new Vuex.Store({
                 (seq) => seq.id !== payload.id
             );
         },
+        RENAME_STORED_SEQUENCE: (state, payload) => {
+            const seq = state.storedSequences.find(
+                (seq) => seq.id == payload.id
+            );
+            seq.name = payload.name;
+        },
     },
     actions: {
         startSequencer: (context, payload) => {
@@ -115,12 +129,41 @@ const store = new Vuex.Store({
                 );
             }
             // TODO: Save initially
+            const date = payload.date ?? Date.now();
+            const name =
+                payload.name ??
+                uniqueNamesGenerator({
+                    dictionaries: [adjectives, animals, colors],
+                    separator: "-",
+                });
+            const sequence = payload.sequence ?? {
+                ...context.getters.sequence,
+            };
             context.commit("ADD_STORED_SEQUENCE", {
-                date: Date.now(),
-                name: payload.name,
-                id: 3,
-                sequence: { ...context.getters.sequence },
+                date: date,
+                name: name,
+                id: shortid.generate(),
+                sequence: sequence,
             });
+        },
+        removeStoredSequenceById: (context, payload) => {
+            context.commit("REMOVE_STORED_SEQUENCE", { id: payload });
+        },
+        duplicateStoredSequenceById: (context, payload) => {
+            const duplicate = {
+                ...context.getters.storedSequenceById(payload),
+            };
+            if (duplicate) {
+                context.commit("ADD_STORED_SEQUENCE", {
+                    date: Date.now(),
+                    name: duplicate.name + " (duplicate)",
+                    id: shortid.generate(),
+                    sequence: duplicate.sequence,
+                });
+            }
+        },
+        renameStoredSequenceById: (context, payload) => {
+            context.commit("RENAME_STORED_SEQUENCE", payload);
         },
     },
     modules: {},

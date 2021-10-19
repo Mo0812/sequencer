@@ -7,11 +7,14 @@
                 <template v-else> Override</template> current sequence in
                 projects</el-button
             >
-            <el-button type="primary" :disabled="currentRow == null"
+            <el-button
+                type="primary"
+                :disabled="currentRow == null"
+                @click="exportSelectedSequence"
                 ><font-awesome-icon icon="file-download" /> Export
                 sequence</el-button
             >
-            <el-button type="primary"
+            <el-button type="primary" @click="importSequence"
                 ><font-awesome-icon icon="file-upload" /> Import
                 sequence</el-button
             >
@@ -19,6 +22,13 @@
                 ><font-awesome-icon icon="file-import" /> Load selected
                 sequence</el-button
             >
+            <input
+                style="display: none"
+                type="file"
+                id="file"
+                ref="file"
+                @change="handleFileUpload($event)"
+            />
         </header>
         <main>
             <el-table
@@ -34,16 +44,39 @@
                     <template slot-scope="scope">
                         <font-awesome-icon icon="clock" />
                         <span style="margin-left: 10px">{{
-                            scope.row.date
+                            moment(scope.row.date).format("L")
                         }}</span>
                     </template>
                 </el-table-column>
+
                 <el-table-column prop="name" label="Name" sortable>
+                    <template slot-scope="scope">
+                        <el-input
+                            placeholder="Sequence name"
+                            v-model="scope.row.name"
+                            @input="
+                                renameStoredSequence(
+                                    scope.row.id,
+                                    scope.row.name
+                                )
+                            "
+                        ></el-input>
+                    </template>
                 </el-table-column>
+
                 <el-table-column fixed="right" label="Actions">
-                    <template>
-                        <el-button size="mini">Duplicate</el-button>
-                        <el-button type="danger" size="mini">Delete</el-button>
+                    <template slot-scope="scope">
+                        <el-button
+                            size="mini"
+                            @click="duplicateStoredSequence(scope.row.id)"
+                            >Duplicate</el-button
+                        >
+                        <el-button
+                            type="danger"
+                            size="mini"
+                            @click="deleteStoredSequence(scope.row.id)"
+                            >Delete</el-button
+                        >
                     </template>
                 </el-table-column>
             </el-table>
@@ -74,7 +107,7 @@ export default {
         handleCurrentRowChange(val) {
             this.currentRow = val;
         },
-        exportSequence() {
+        exportSelectedSequence() {
             const blob = new Blob([JSON.stringify(this.currentRow)], {
                 type: "application/json",
             });
@@ -90,8 +123,36 @@ export default {
         storeCurrentSequence() {
             this.$store.dispatch("storeSequenceInStoredSequences", {
                 selectedSequence: this.currentRow,
-                name: "Test",
             });
+        },
+        duplicateStoredSequence(id) {
+            this.$store.dispatch("duplicateStoredSequenceById", id);
+        },
+        deleteStoredSequence(id) {
+            this.$store.dispatch("removeStoredSequenceById", id);
+        },
+        renameStoredSequence(id, newName) {
+            this.$store.dispatch("renameStoredSequenceById", {
+                id: id,
+                name: newName,
+            });
+        },
+        importSequence() {
+            this.$refs.file.click();
+        },
+        async handleFileUpload(event) {
+            let raw = event.target.files[0];
+
+            let file = await new Promise((resolve, reject) => {
+                let reader = new FileReader();
+                reader.onload = (event) => {
+                    resolve(JSON.parse(event.target.result));
+                };
+                reader.onerror = reject;
+                reader.readAsText(raw);
+            });
+
+            await this.$store.dispatch("storeSequenceInStoredSequences", file);
         },
     },
 };

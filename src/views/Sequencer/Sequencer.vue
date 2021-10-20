@@ -87,7 +87,10 @@
             :visible.sync="importExportVisible"
             width="75%"
         >
-            <ProjectManager />
+            <ProjectManager
+                :currentSequence="sequenceExport"
+                @loadSequence="loadSequence"
+            />
             <template slot="footer" class="dialog-footer">
                 <el-button @click="importExportVisible = false"
                     >Cancel</el-button
@@ -212,6 +215,10 @@ export default {
         restoreSequence() {
             console.log("restore sequence");
             this.sequenceImport = { ...this.sequence };
+            this.trackTrigger = !this.trackTrigger;
+        },
+        loadSequence(val) {
+            this.sequenceImport = { ...val };
             this.trackTrigger = !this.trackTrigger;
         },
     },

@@ -136,7 +136,7 @@ const store = new Vuex.Store({
                     dictionaries: [adjectives, animals, colors],
                     separator: "-",
                 });
-            const sequence = payload.sequence ?? {
+            const sequence = { ...payload.sequence } ?? {
                 ...context.getters.sequence,
             };
             context.commit("ADD_STORED_SEQUENCE", {

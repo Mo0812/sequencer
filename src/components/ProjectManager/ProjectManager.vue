@@ -1,5 +1,6 @@
 <template>
     <div class="project-manager">
+        <h3>Stored Sequences</h3>
         <header>
             <el-button type="primary" @click="storeCurrentSequence">
                 <font-awesome-icon icon="save" />
@@ -18,7 +19,10 @@
                 ><font-awesome-icon icon="file-upload" /> Import
                 sequence</el-button
             >
-            <el-button type="primary" :disabled="currentRow == null"
+            <el-button
+                type="primary"
+                :disabled="currentRow == null"
+                @click="loadSelectedSequence"
                 ><font-awesome-icon icon="file-import" /> Load selected
                 sequence</el-button
             >
@@ -81,7 +85,9 @@
                 </el-table-column>
             </el-table>
             <div style="margin-top: 10px">
-                <el-button @click="setCurrentRow()">Clear selection</el-button>
+                <el-button size="mini" @click="setCurrentRow()"
+                    >Clear selection</el-button
+                >
             </div>
         </main>
     </div>
@@ -91,6 +97,7 @@
 import { mapGetters } from "vuex";
 export default {
     name: "ProjectManager",
+    props: ["currentSequence"],
     data() {
         return {
             sequences: [],
@@ -123,7 +130,11 @@ export default {
         storeCurrentSequence() {
             this.$store.dispatch("storeSequenceInStoredSequences", {
                 selectedSequence: this.currentRow,
+                sequence: this.currentSequence,
             });
+        },
+        loadSelectedSequence() {
+            this.$emit("loadSequence", this.currentRow.sequence);
         },
         duplicateStoredSequence(id) {
             this.$store.dispatch("duplicateStoredSequenceById", id);

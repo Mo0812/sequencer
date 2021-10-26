@@ -2,7 +2,7 @@
     <div class="project-manager">
         <h3>Stored Sequences</h3>
         <header>
-            <el-button type="primary" @click="storeCurrentSequence">
+            <el-button type="primary" size="mini" @click="storeCurrentSequence">
                 <font-awesome-icon icon="save" />
                 <template v-if="currentRow == null"> Save </template>
                 <template v-else> Override</template> current sequence in
@@ -11,16 +11,18 @@
             <el-button
                 type="primary"
                 :disabled="currentRow == null"
+                size="mini"
                 @click="exportSelectedSequence"
                 ><font-awesome-icon icon="file-download" /> Export
                 sequence</el-button
             >
-            <el-button type="primary" @click="importSequence"
+            <el-button type="primary" size="mini" @click="importSequence"
                 ><font-awesome-icon icon="file-upload" /> Import
                 sequence</el-button
             >
             <el-button
                 type="primary"
+                size="mini"
                 :disabled="currentRow == null"
                 @click="loadSelectedSequence"
                 ><font-awesome-icon icon="file-import" /> Load selected
@@ -58,6 +60,7 @@
                         <el-input
                             placeholder="Sequence name"
                             v-model="scope.row.name"
+                            size="mini"
                             @input="
                                 renameStoredSequence(
                                     scope.row.id,

@@ -68,10 +68,16 @@
                                     >
                                 </el-select>
                             </article>
-                            <article v-if="synthModel == 'sampler'" class="sample-control">
-
+                            <article
+                                v-if="synthModel == 'sampler'"
+                                class="sample-control"
+                            >
+                                <el-input v-model="sample" />
                             </article>
-                            <article v-if="synthModel != 'sampler'" class="synth-control">
+                            <article
+                                v-if="synthModel != 'sampler'"
+                                class="synth-control"
+                            >
                                 <SynthParameters
                                     :model="synthModel"
                                     @synthOptionChange="initializeSynth"
@@ -252,7 +258,9 @@ export default {
             sequence: null,
             showTriggerIndex: null,
             synth: null,
-            synthModel: "synth",
+            synthModel: "sampler",
+            synthLoading: false,
+            sample: "https://tonejs.github.io/audio/berklee/gong_1.mp3",
             volume: 100,
             notes: [
                 "C",
@@ -292,7 +300,7 @@ export default {
                     enabled: false,
                 },
             },
-            trackControlsActiveTab: "effects",
+            trackControlsActiveTab: "sound",
         };
     },
     created() {
@@ -507,6 +515,13 @@ export default {
                 }
             },
         },
+        sample: {
+            handler(val, oldVal) {
+                if (val !== oldVal) {
+                    this.initializeSynth();
+                }
+            },
+        },
         volume: {
             handler(val) {
                 this.synth.volume.value = this.calcVolumeInDb(val);
@@ -650,13 +665,22 @@ export default {
             if (this.synthModel == "monoSynth") {
                 this.synth = new Tone.MonoSynth(options).toDestination();
             } else if (this.synthModel == "sampler") {
-                this.synth = new Tone.Sampler({
-                    urls: {
-                        C4: "gong_1.mp3",
-                    },
-                    baseUrl: "https://tonejs.github.io/audio/berklee/",
-                }).toDestination();
+                this.synthLoading = true;
+                let sample = this.sample;
+                if (typeof sample === "string") {
+                    sample = {
+                        urls: {
+                            C4: sample.substring(sample.lastIndexOf("/") + 1),
+                        },
+                        baseUrl: sample.substring(
+                            0,
+                            sample.lastIndexOf("/") + 1
+                        ),
+                    };
+                }
+                this.synth = new Tone.Sampler(sample).toDestination();
                 await Tone.loaded();
+                this.synthLoading = false;
             } else {
                 this.synth = new Tone.Synth().toDestination();
             }

@@ -60,9 +60,18 @@
                                         label="Mono Synth"
                                         >Mono Synth</el-option
                                     >
+                                    <el-option
+                                        key="sampler"
+                                        value="sampler"
+                                        label="Sampler"
+                                        >Sampler</el-option
+                                    >
                                 </el-select>
                             </article>
-                            <article class="synth-control">
+                            <article v-if="synthModel == 'sampler'" class="sample-control">
+
+                            </article>
+                            <article v-if="synthModel != 'sampler'" class="synth-control">
                                 <SynthParameters
                                     :model="synthModel"
                                     @synthOptionChange="initializeSynth"
@@ -637,9 +646,17 @@ export default {
                 this.effects.reverb.properties.decay
             ).toDestination();
         },
-        initializeSynth(options = {}) {
+        async initializeSynth(options = {}) {
             if (this.synthModel == "monoSynth") {
                 this.synth = new Tone.MonoSynth(options).toDestination();
+            } else if (this.synthModel == "sampler") {
+                this.synth = new Tone.Sampler({
+                    urls: {
+                        C4: "gong_1.mp3",
+                    },
+                    baseUrl: "https://tonejs.github.io/audio/berklee/",
+                }).toDestination();
+                await Tone.loaded();
             } else {
                 this.synth = new Tone.Synth().toDestination();
             }

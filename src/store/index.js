@@ -20,6 +20,7 @@ const vuexPersist = new VuexPersistence({
         settings: state.settings,
         currentSequence: state.currentSequence,
         storedSequences: state.storedSequences,
+        storedSamples: state.storedSamples,
     }),
 });
 
@@ -38,6 +39,7 @@ const store = new Vuex.Store({
         },
         currentSequence: {},
         storedSequences: [],
+        storedSamples: [],
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
@@ -50,6 +52,10 @@ const store = new Vuex.Store({
         storedSequences: (state) => state.storedSequences,
         storedSequenceById: (state) => (id) => {
             return state.storedSequences.find((seq) => seq.id == id);
+        },
+        storedSamples: (state) => state.storedSamples,
+        storedSampleById: (state) => (id) => {
+            return state.storedSamples.find((smp) => smp.id == id);
         },
     },
     mutations: {
@@ -98,6 +104,26 @@ const store = new Vuex.Store({
                 (seq) => seq.id == payload.id
             );
             seq.name = payload.name;
+        },
+        ADD_STORED_SAMPLE: (state, payload) => {
+            state.storedSamples.push(payload);
+        },
+        REMOVE_STORED_SAMPLE: (state, payload) => {
+            state.storedSamples = state.storedSamples.filter(
+                (smp) => smp.id !== payload.id
+            );
+        },
+        RENAME_STORED_SAMPLE: (state, payload) => {
+            const smp = state.storedSamples.find((smp) => smp.id == payload.id);
+            smp.name = payload.name;
+        },
+        CHANGE_STORED_SAMPLE_URL: (state, payload) => {
+            const smp = state.storedSamples.find((smp) => smp.id == payload.id);
+            smp.name =
+                !smp.name || smp.name == ""
+                    ? payload.url.replace(/^.*[\\/]/, "")
+                    : smp.name;
+            smp.url = payload.url;
         },
     },
     actions: {
@@ -164,6 +190,43 @@ const store = new Vuex.Store({
         },
         renameStoredSequenceById: (context, payload) => {
             context.commit("RENAME_STORED_SEQUENCE", payload);
+        },
+        addStoredSample: (context, payload) => {
+            const date = payload.date ?? Date.now();
+            const name =
+                payload.name ?? payload.url
+                    ? payload.url.replace(/^.*[\\/]/, "")
+                    : "";
+            const url = payload.url ?? "";
+
+            context.commit("ADD_STORED_SAMPLE", {
+                date: date,
+                name: name,
+                id: shortid.generate(),
+                url: url,
+            });
+        },
+        removeStoredSampleById: (context, payload) => {
+            context.commit("REMOVE_STORED_SAMPLE", { id: payload });
+        },
+        duplicateStoredSampleById: (context, payload) => {
+            const duplicate = {
+                ...context.getters.storedSampleById(payload),
+            };
+            if (duplicate) {
+                context.commit("ADD_STORED_SAMPLE", {
+                    date: Date.now(),
+                    name: duplicate.name + " (duplicate)",
+                    id: shortid.generate(),
+                    url: duplicate.url,
+                });
+            }
+        },
+        renameStoredSampleById: (context, payload) => {
+            context.commit("RENAME_STORED_SAMPLE", payload);
+        },
+        changeStoredSampleUrlById: (context, payload) => {
+            context.commit("CHANGE_STORED_SAMPLE_URL", payload);
         },
     },
     modules: {},

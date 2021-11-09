@@ -73,6 +73,12 @@
                                 class="sample-control"
                             >
                                 <el-input v-model="sample" />
+                                <button
+                                    class="no-highlight"
+                                    @click="sampleManagerVisible = true"
+                                >
+                                    Sample Manager
+                                </button>
                             </article>
                             <article
                                 v-if="synthModel != 'sampler'"
@@ -234,6 +240,19 @@
             </main>
             <aside class="rightbar"></aside>
         </div>
+
+        <el-dialog
+            title="Sample Manager"
+            :visible.sync="sampleManagerVisible"
+            width="75%"
+        >
+            <SampleManager @useSample="sample = $event" />
+            <template slot="footer" class="dialog-footer">
+                <el-button @click="sampleManagerVisible = false"
+                    >Cancel</el-button
+                >
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -242,6 +261,7 @@ import * as Tone from "tone";
 
 import { EventBus } from "@/utils/event-bus";
 import SynthParameters from "@/components/SynthParameters/SynthParameters";
+import SampleManager from "@/components/SampleManager/SampleManager";
 
 import "./Track.scss";
 import { mapGetters } from "vuex";
@@ -251,6 +271,7 @@ export default {
     props: ["muted", "trackImport", "trigger"],
     components: {
         SynthParameters,
+        SampleManager,
     },
     data() {
         return {
@@ -301,6 +322,7 @@ export default {
                 },
             },
             trackControlsActiveTab: "sound",
+            sampleManagerVisible: false,
         };
     },
     created() {

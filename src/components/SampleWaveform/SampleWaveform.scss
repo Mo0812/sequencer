@@ -1,0 +1,24 @@
+.sample-waveform {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    .controls {
+        display: flex;
+        flex-direction: row;
+
+        .control {
+            height: 50px;
+            align-self: center;
+
+            &.backward {
+                background-color: $backgroundAlt;
+            }
+        }
+    }
+
+    .waveform {
+        width: 100%;
+        flex: 1;
+    }
+}

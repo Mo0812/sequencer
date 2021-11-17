@@ -37,9 +37,9 @@ yarn build
 -   [x] Trigger specific controls
 -   [x] MIDI Input support
 -   [ ] Track length up to 64 steps
--   [ ] Sampling of custom sounds
+-   [x] Sampling of custom sounds
 -   [x] Track controls like muting
 -   [ ] Effect controls over all tracks
--   [ ] Storing and Loading created patterns
--   [ ] Sample Library
+-   [x] Storing and Loading created patterns
+-   [x] Sample Library
 -   [ ] Trigger specific sound controls like individual synth or samples

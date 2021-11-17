@@ -30,7 +30,10 @@
             >
                 <font-awesome-icon icon="undo" />
             </button>
-            <button class="storage import no-highlight" @click="exportSequence">
+            <button
+                class="storage import no-highlight"
+                @click="importExportVisible = true"
+            >
                 <font-awesome-icon icon="file-export" />
             </button>
         </section>
@@ -78,6 +81,22 @@
                 />
             </div>
         </section>
+
+        <el-dialog
+            title="Project Manager"
+            :visible.sync="importExportVisible"
+            width="75%"
+        >
+            <ProjectManager
+                :currentSequence="sequenceExport"
+                @loadSequence="loadSequence"
+            />
+            <template slot="footer" class="dialog-footer">
+                <el-button @click="importExportVisible = false"
+                    >Cancel</el-button
+                >
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -86,6 +105,7 @@ import { EventBus } from "@/utils/event-bus";
 
 import Track from "@/views/Track/Track";
 import Navbar from "@/components/Navbar/Navbar";
+import ProjectManager from "@/components/ProjectManager/ProjectManager";
 
 import "./Sequencer.scss";
 import { mapGetters } from "vuex";
@@ -100,11 +120,13 @@ export default {
             sequenceExport: {},
             sequenceImport: {},
             trackTrigger: false,
+            importExportVisible: false,
         };
     },
     components: {
         Track,
         Navbar,
+        ProjectManager,
     },
     created() {},
     mounted() {
@@ -195,18 +217,9 @@ export default {
             this.sequenceImport = { ...this.sequence };
             this.trackTrigger = !this.trackTrigger;
         },
-        exportSequence() {
-            const blob = new Blob([JSON.stringify(this.sequence)], {
-                type: "application/json",
-            });
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            document.body.appendChild(a);
-            a.style = "display: none;";
-            a.href = url;
-            a.download = "sequencer.json";
-            a.click();
-            window.URL.revokeObjectURL(url);
+        loadSequence(val) {
+            this.sequenceImport = { ...val };
+            this.trackTrigger = !this.trackTrigger;
         },
     },
 };

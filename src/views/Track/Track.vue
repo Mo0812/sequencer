@@ -60,9 +60,34 @@
                                         label="Mono Synth"
                                         >Mono Synth</el-option
                                     >
+                                    <el-option
+                                        key="sampler"
+                                        value="sampler"
+                                        label="Sampler"
+                                        >Sampler</el-option
+                                    >
                                 </el-select>
                             </article>
-                            <article class="synth-control">
+                            <article
+                                v-if="synthModel == 'sampler'"
+                                class="sample-control"
+                            >
+                                <el-input v-model="sample" />
+                                <button
+                                    class="no-highlight"
+                                    @click="sampleManagerVisible = true"
+                                >
+                                    Sample Manager
+                                </button>
+                                <SampleWaveform
+                                    :url="sample"
+                                    :showControls="false"
+                                />
+                            </article>
+                            <article
+                                v-if="synthModel != 'sampler'"
+                                class="synth-control"
+                            >
                                 <SynthParameters
                                     :model="synthModel"
                                     @synthOptionChange="initializeSynth"
@@ -219,6 +244,19 @@
             </main>
             <aside class="rightbar"></aside>
         </div>
+
+        <el-dialog
+            title="Sample Manager"
+            :visible.sync="sampleManagerVisible"
+            width="75%"
+        >
+            <SampleManager @useSample="sample = $event" />
+            <template slot="footer" class="dialog-footer">
+                <el-button @click="sampleManagerVisible = false"
+                    >Cancel</el-button
+                >
+            </template>
+        </el-dialog>
     </div>
 </template>
 
@@ -227,6 +265,8 @@ import * as Tone from "tone";
 
 import { EventBus } from "@/utils/event-bus";
 import SynthParameters from "@/components/SynthParameters/SynthParameters";
+import SampleManager from "@/components/SampleManager/SampleManager";
+import SampleWaveform from "@/components/SampleWaveform/SampleWaveform";
 
 import "./Track.scss";
 import { mapGetters } from "vuex";
@@ -236,6 +276,8 @@ export default {
     props: ["muted", "trackImport", "trigger"],
     components: {
         SynthParameters,
+        SampleManager,
+        SampleWaveform,
     },
     data() {
         return {
@@ -243,7 +285,9 @@ export default {
             sequence: null,
             showTriggerIndex: null,
             synth: null,
-            synthModel: "synth",
+            synthModel: "sampler",
+            synthLoading: false,
+            sample: "https://tonejs.github.io/audio/berklee/gong_1.mp3",
             volume: 100,
             notes: [
                 "C",
@@ -283,7 +327,8 @@ export default {
                     enabled: false,
                 },
             },
-            trackControlsActiveTab: "effects",
+            trackControlsActiveTab: "sound",
+            sampleManagerVisible: false,
         };
     },
     created() {
@@ -498,6 +543,13 @@ export default {
                 }
             },
         },
+        sample: {
+            handler(val, oldVal) {
+                if (val !== oldVal) {
+                    this.initializeSynth();
+                }
+            },
+        },
         volume: {
             handler(val) {
                 this.synth.volume.value = this.calcVolumeInDb(val);
@@ -637,9 +689,26 @@ export default {
                 this.effects.reverb.properties.decay
             ).toDestination();
         },
-        initializeSynth(options = {}) {
+        async initializeSynth(options = {}) {
             if (this.synthModel == "monoSynth") {
                 this.synth = new Tone.MonoSynth(options).toDestination();
+            } else if (this.synthModel == "sampler") {
+                this.synthLoading = true;
+                let sample = this.sample;
+                if (typeof sample === "string") {
+                    sample = {
+                        urls: {
+                            C4: sample.substring(sample.lastIndexOf("/") + 1),
+                        },
+                        baseUrl: sample.substring(
+                            0,
+                            sample.lastIndexOf("/") + 1
+                        ),
+                    };
+                }
+                this.synth = new Tone.Sampler(sample).toDestination();
+                await Tone.loaded();
+                this.synthLoading = false;
             } else {
                 this.synth = new Tone.Synth().toDestination();
             }

@@ -79,6 +79,10 @@
                                 >
                                     Sample Manager
                                 </button>
+                                <SampleWaveform
+                                    :url="sample"
+                                    :showControls="false"
+                                />
                             </article>
                             <article
                                 v-if="synthModel != 'sampler'"
@@ -262,6 +266,7 @@ import * as Tone from "tone";
 import { EventBus } from "@/utils/event-bus";
 import SynthParameters from "@/components/SynthParameters/SynthParameters";
 import SampleManager from "@/components/SampleManager/SampleManager";
+import SampleWaveform from "@/components/SampleWaveform/SampleWaveform";
 
 import "./Track.scss";
 import { mapGetters } from "vuex";
@@ -272,6 +277,7 @@ export default {
     components: {
         SynthParameters,
         SampleManager,
+        SampleWaveform,
     },
     data() {
         return {

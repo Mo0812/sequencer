@@ -12,9 +12,7 @@
             >
                 <el-table-column prop="preview" label="">
                     <template slot-scope="scope">
-                        <button @click="previewSample(scope.row.url)">
-                            <font-awesome-icon icon="play" />
-                        </button>
+                        <SampleWaveform :url="scope.row.url" />
                     </template>
                 </el-table-column>
 
@@ -51,11 +49,13 @@
                     <template slot-scope="scope">
                         <el-button
                             size="mini"
+                            :disabled="!scope.row.url"
                             @click="useStoredSample(scope.row.id)"
                             >Use
                         </el-button>
                         <el-button
                             size="mini"
+                            :disabled="!scope.row.url"
                             @click="duplicateStoredSample(scope.row.id)"
                             >Duplicate</el-button
                         >
@@ -78,12 +78,15 @@
 </template>
 
 <script>
-import * as Tone from "tone";
+import SampleWaveform from "@/components/SampleWaveform/SampleWaveform";
 
 import { mapGetters } from "vuex";
 
 export default {
     name: "SampleManager",
+    components: {
+        SampleWaveform,
+    },
     data() {
         return {
             samples: [],
@@ -132,12 +135,6 @@ export default {
             });
 
             await this.$store.dispatch("storeSequenceInStoredSamples", file);
-        },
-        previewSample(url) {
-            const player = new Tone.Player(url).toDestination();
-            Tone.loaded().then(() => {
-                player.start();
-            });
         },
     },
 };

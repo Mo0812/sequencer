@@ -60,8 +60,38 @@
             }
 
             .effect,
-            .synth-control {
+            .synth-control,
+            .sample-control {
                 @include article-area;
+            }
+
+            .synth-control {
+                .synth-model {
+                    width: 100%;
+                }
+            }
+
+            .sample-control {
+                .sample-used {
+                    header {
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;
+                        justify-content: space-between;
+
+                        .sample-manager {
+                            align-self: flex-end;
+                        }
+                    }
+
+                    .sample-url {
+                        width: 100%;
+                    }
+
+                    .sample-waveform {
+                        width: 100%;
+                    }
+                }
             }
 
             .effect {

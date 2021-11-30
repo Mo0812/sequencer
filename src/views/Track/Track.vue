@@ -47,7 +47,10 @@
                             </article>
                             <article class="synth-control">
                                 <header>Synth model</header>
-                                <el-select v-model="synthModel">
+                                <el-select
+                                    v-model="synthModel"
+                                    class="synth-model"
+                                >
                                     <el-option
                                         key="synth"
                                         value="synth"
@@ -70,19 +73,27 @@
                             </article>
                             <article
                                 v-if="synthModel == 'sampler'"
-                                class="sample-control"
+                                class="sample-control sample-management"
                             >
-                                <el-input v-model="sample" />
-                                <button
-                                    class="no-highlight"
-                                    @click="sampleManagerVisible = true"
-                                >
-                                    Sample Manager
-                                </button>
-                                <SampleWaveform
-                                    :url="sample"
-                                    :showControls="false"
-                                />
+                                <div class="sample-used">
+                                    <header>
+                                        <span> Used Sample </span>
+                                        <button
+                                            class="sample-manager no-highlight"
+                                            @click="sampleManagerVisible = true"
+                                        >
+                                            Sample Manager
+                                        </button>
+                                    </header>
+                                    <el-input
+                                        v-model="sample"
+                                        class="sample-url"
+                                    />
+                                    <SampleWaveform
+                                        :url="sample"
+                                        :showControls="false"
+                                    />
+                                </div>
                             </article>
                             <article
                                 v-if="synthModel != 'sampler'"

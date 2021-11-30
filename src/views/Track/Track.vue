@@ -113,88 +113,7 @@
                                     : ''
                             "
                         >
-                            <article class="effect distortion">
-                                <header>
-                                    Distortion
-                                    <el-switch
-                                        v-model="effects.distortion.enabled"
-                                    ></el-switch>
-                                </header>
-                                <div class="controls">
-                                    <div class="control">
-                                        <p class="label">Amount</p>
-                                        <div class="value">
-                                            <el-slider
-                                                v-model="
-                                                    effects.distortion
-                                                        .properties.distortion
-                                                "
-                                                :min="0"
-                                                :max="100"
-                                            ></el-slider>
-                                        </div>
-                                    </div>
-                                </div>
-                            </article>
-                            <article class="effect delay">
-                                <header>
-                                    Delay
-                                    <el-switch
-                                        v-model="effects.delay.enabled"
-                                    ></el-switch>
-                                </header>
-                                <div class="controls">
-                                    <div class="control">
-                                        <p class="label">Time</p>
-                                        <div class="value">
-                                            <el-slider
-                                                v-model="
-                                                    effects.delay.properties
-                                                        .delayTime
-                                                "
-                                                :min="0"
-                                                :max="100"
-                                            ></el-slider>
-                                        </div>
-                                    </div>
-                                    <div class="control">
-                                        <p class="label">Feedback</p>
-                                        <div class="value">
-                                            <el-slider
-                                                v-model="
-                                                    effects.delay.properties
-                                                        .feedback
-                                                "
-                                                :min="0"
-                                                :max="100"
-                                            ></el-slider>
-                                        </div>
-                                    </div>
-                                </div>
-                            </article>
-                            <article class="effect reverb">
-                                <header>
-                                    Reverb
-                                    <el-switch
-                                        v-model="effects.reverb.enabled"
-                                    ></el-switch>
-                                </header>
-                                <div class="controls">
-                                    <div class="control">
-                                        <p class="label">Decay</p>
-                                        <div class="value">
-                                            <el-slider
-                                                v-model="
-                                                    effects.reverb.properties
-                                                        .decay
-                                                "
-                                                :min="0"
-                                                :max="100"
-                                            ></el-slider>
-                                        </div>
-                                    </div>
-                                </div>
-                            </article>
+                            <TrackEffects :trackIndex="trackIndex" />
                         </div>
                     </div>
                 </section>
@@ -276,6 +195,7 @@ import * as Tone from "tone";
 
 import { EventBus } from "@/utils/event-bus";
 import SynthParameters from "@/components/SynthParameters/SynthParameters";
+import TrackEffects from "@/components/TrackEffects/TrackEffects";
 import SampleManager from "@/components/SampleManager/SampleManager";
 import SampleWaveform from "@/components/SampleWaveform/SampleWaveform";
 
@@ -284,9 +204,10 @@ import { mapGetters } from "vuex";
 
 export default {
     name: "Track",
-    props: ["muted", "trackImport", "trigger"],
+    props: ["muted", "trackImport", "trigger", "trackIndex"],
     components: {
         SynthParameters,
+        TrackEffects,
         SampleManager,
         SampleWaveform,
     },
@@ -295,7 +216,6 @@ export default {
             sequenceTrigger: [],
             sequence: null,
             showTriggerIndex: null,
-            synth: null,
             synthModel: "sampler",
             synthLoading: false,
             sample: "https://tonejs.github.io/audio/berklee/gong_1.mp3",
@@ -314,36 +234,12 @@ export default {
                 "A#",
                 "B",
             ],
-            effects: {
-                distortion: {
-                    instance: null,
-                    properties: {
-                        distortion: 40,
-                    },
-                    enabled: false,
-                },
-                delay: {
-                    instance: null,
-                    properties: {
-                        delayTime: 12,
-                        feedback: 50,
-                    },
-                    enabled: false,
-                },
-                reverb: {
-                    instance: null,
-                    properties: {
-                        decay: 1,
-                    },
-                    enabled: false,
-                },
-            },
+            effects: {},
             trackControlsActiveTab: "sound",
             sampleManagerVisible: false,
         };
     },
     created() {
-        this.initializeEffects();
         this.initializeSynth();
     },
     mounted() {
@@ -434,22 +330,12 @@ export default {
         },
         trackExport() {
             return {
-                effects: {
-                    distortion: {
-                        enabled: this.effects.distortion.enabled,
-                        properties: this.effects.distortion.properties,
-                    },
-                    delay: {
-                        enabled: this.effects.delay.enabled,
-                        properties: this.effects.delay.properties,
-                    },
-                    reverb: {
-                        enabled: this.effects.reverb.enabled,
-                        properties: this.effects.reverb.properties,
-                    },
-                },
                 sequenceTrigger: this.sequenceTrigger,
+                // TODO: Export effects for track
             };
+        },
+        synth() {
+            return this.$store.getters.trackSynth(this.trackIndex);
         },
     },
     watch: {
@@ -491,59 +377,6 @@ export default {
                         this.sequence.remove(removedTrigger.time);
                     }
                 }
-            },
-            deep: true,
-        },
-        "effects.distortion.enabled": {
-            handler(val) {
-                if (val) {
-                    this.synth.connect(this.effects.distortion.instance);
-                } else {
-                    this.synth.disconnect(this.effects.distortion.instance);
-                }
-            },
-        },
-        "effects.distortion.properties": {
-            handler(val) {
-                console.log("setting distortion to: ", val);
-                this.effects.distortion.instance.set({
-                    distortion: val.distortion / 100,
-                });
-            },
-            deep: true,
-        },
-        "effects.delay.enabled": {
-            handler(val) {
-                if (val) {
-                    this.synth.connect(this.effects.delay.instance);
-                } else {
-                    this.synth.disconnect(this.effects.delay.instance);
-                }
-            },
-        },
-        "effects.delay.properties": {
-            handler(val) {
-                console.log("setting delay settings to: ", val);
-                this.effects.delay.instance.set({
-                    delayTime: val.delayTime / 100,
-                    feedback: val.feedback / 100,
-                });
-            },
-            deep: true,
-        },
-        "effects.reverb.enabled": {
-            handler(val) {
-                if (val) {
-                    this.synth.connect(this.effects.reverb.instance);
-                } else {
-                    this.synth.disconnect(this.effects.reverb.instance);
-                }
-            },
-        },
-        "effects.reverb.properties": {
-            handler(val) {
-                console.log("setting reverb to: ", val);
-                this.effects.reverb.instance.set(val);
             },
             deep: true,
         },
@@ -589,7 +422,8 @@ export default {
                         ...this.trackImport.sequenceTrigger,
                     ];
                 }
-                if (this.trackImport && this.trackImport.effects) {
+                // TODO: Apply stored effects on imported track
+                /*if (this.trackImport && this.trackImport.effects) {
                     console.log("effect restore");
                     this.effects.distortion.enabled =
                         this.trackImport.effects.distortion.enabled;
@@ -608,7 +442,7 @@ export default {
                     this.effects.reverb.properties = {
                         ...this.trackImport.effects.reverb.properties,
                     };
-                }
+                }*/
             },
         },
     },
@@ -686,23 +520,10 @@ export default {
         setTrackControlSelection(key) {
             this.trackControlsActiveTab = key;
         },
-        initializeEffects() {
-            this.effects.distortion.instance = new Tone.Distortion(
-                this.effects.distortion.properties.distortion / 100
-            ).toDestination();
-
-            this.effects.delay.instance = new Tone.FeedbackDelay(
-                this.effects.delay.properties.delayTime / 100,
-                this.effects.delay.properties.feedback / 100
-            ).toDestination();
-
-            this.effects.reverb.instance = new Tone.Reverb(
-                this.effects.reverb.properties.decay
-            ).toDestination();
-        },
         async initializeSynth(options = {}) {
+            let synth = null;
             if (this.synthModel == "monoSynth") {
-                this.synth = new Tone.MonoSynth(options).toDestination();
+                synth = new Tone.MonoSynth(options).toDestination();
             } else if (this.synthModel == "sampler") {
                 this.synthLoading = true;
                 let sample = this.sample;
@@ -717,22 +538,19 @@ export default {
                         ),
                     };
                 }
-                this.synth = new Tone.Sampler(sample).toDestination();
+                synth = new Tone.Sampler(sample).toDestination();
                 await Tone.loaded();
                 this.synthLoading = false;
             } else {
-                this.synth = new Tone.Synth().toDestination();
+                synth = new Tone.Synth().toDestination();
             }
 
-            if (this.effects.distortion.enabled) {
-                this.synth.connect(this.effects.distortion.instance);
-            }
-            if (this.effects.delay.enabled) {
-                this.synth.connect(this.effects.delay.instance);
-            }
-            if (this.effects.reverb.enabled) {
-                this.synth.connect(this.effects.reverb.instance);
-            }
+            this.$store.commit("SET_TRACK_SYNTH", {
+                id: this.trackIndex,
+                synth: synth,
+            });
+
+            // TODO: Apply effects on current synth
         },
     },
 };

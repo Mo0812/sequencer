@@ -5,7 +5,6 @@ import VuexPersistence from "vuex-persist";
 import shortid from "shortid";
 import {
     uniqueNamesGenerator,
-    Config,
     adjectives,
     colors,
     animals,
@@ -40,6 +39,7 @@ const store = new Vuex.Store({
         currentSequence: {},
         storedSequences: [],
         storedSamples: [],
+        tracks: {},
     },
     getters: {
         sequencerState: (state) => state.sequencerState,
@@ -56,6 +56,15 @@ const store = new Vuex.Store({
         storedSamples: (state) => state.storedSamples,
         storedSampleById: (state) => (id) => {
             return state.storedSamples.find((smp) => smp.id == id);
+        },
+        track: (state) => (id) => {
+            return state.tracks[id];
+        },
+        trackSynth: (state) => (id) => {
+            return state.tracks[id].synth ?? null;
+        },
+        trackEffects: (state) => (id) => {
+            return state.tracks[id].effects ?? null;
         },
     },
     mutations: {
@@ -124,6 +133,12 @@ const store = new Vuex.Store({
                     ? payload.url.replace(/^.*[\\/]/, "")
                     : smp.name;
             smp.url = payload.url;
+        },
+        SET_TRACK_SYNTH: (state, payload) => {
+            if (!state.tracks[payload.id]) {
+                state.tracks[payload.id] = { synth: null };
+            }
+            state.tracks[payload.id].synth = payload.synth;
         },
     },
     actions: {

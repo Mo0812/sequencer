@@ -35,6 +35,7 @@ const store = new Vuex.Store({
         packageVersion: process.env.PACKAGE_VERSION || "0",
         settings: {
             enableMIDI: true,
+            defaultBPM: 90,
         },
         currentSequence: {},
         storedSequences: [],
